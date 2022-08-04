@@ -16,7 +16,6 @@ public class BoxService {
     }
 
     public BoxDto create(BoxCreateDto boxCreateDto) {
-        //TODO validation
         Box box = new Box(boxCreateDto.getOpenTime(), boxCreateDto.getCloseTime(), boxCreateDto.getTimeCoefficient());
         boxRepo.save(box);
         return BoxDto.toDto(box);

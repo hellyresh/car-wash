@@ -1,6 +1,5 @@
 package com.example.carwash.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +11,7 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "users")
+@DiscriminatorColumn(name = "role_type")
 public class User {
 
     @Id
@@ -25,19 +25,14 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "username")
+    private String username;
 
     @Column(name = "password")
     private String password;
 
     @Column(name = "role")
     private Role role;
-
-    @Column(name = "min_discount")
-    private int min_discount;
-    @Column(name = "max_discount")
-    private int max_discount;
 
     @OneToMany(mappedBy = "user")
     private Set<Order> orders = new HashSet<>();

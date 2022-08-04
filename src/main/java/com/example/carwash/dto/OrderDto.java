@@ -2,10 +2,14 @@ package com.example.carwash.dto;
 
 import com.example.carwash.model.Order;
 import com.example.carwash.model.OrderStatus;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 
+@Getter
+@Setter
 public class OrderDto {
     private Long id;
     private Long userId;
@@ -14,6 +18,7 @@ public class OrderDto {
     private Instant dateTime;
     private int discount;
     private BigDecimal price;
+    private Long boxId;
 
     public static OrderDto toDto(Order order) {
         OrderDto orderDto = new OrderDto();
@@ -24,6 +29,7 @@ public class OrderDto {
         orderDto.dateTime = order.getDateTime();
         orderDto.discount = order.getDiscount();
         orderDto.price = order.getPrice();
+        orderDto.boxId = order.getBox().getId();
         return orderDto;
     }
 }

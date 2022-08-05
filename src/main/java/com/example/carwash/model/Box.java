@@ -27,6 +27,7 @@ public class Box {
     @Column(name = "coefficient")
     private double timeCoefficient;
 
+
     public Box(LocalTime openTime, LocalTime closeTime, double timeCoefficient) {
         this.openTime = openTime;
         this.closeTime = closeTime;

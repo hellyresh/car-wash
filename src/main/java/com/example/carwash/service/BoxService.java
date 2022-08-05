@@ -1,7 +1,7 @@
 package com.example.carwash.service;
 
-import com.example.carwash.dto.BoxCreateDto;
-import com.example.carwash.dto.BoxDto;
+import com.example.carwash.dto.box.BoxCreateDto;
+import com.example.carwash.dto.box.BoxDto;
 import com.example.carwash.model.Box;
 import com.example.carwash.repository.BoxRepo;
 import org.springframework.stereotype.Service;

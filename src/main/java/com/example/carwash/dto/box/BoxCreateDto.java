@@ -1,9 +1,10 @@
-package com.example.carwash.dto;
+package com.example.carwash.dto.box;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.time.LocalTime;
 
 @Getter
@@ -14,5 +15,6 @@ public class BoxCreateDto {
     @NotNull
     private LocalTime closeTime;
     @NotNull
+    @Positive
     private double timeCoefficient;
 }

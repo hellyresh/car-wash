@@ -1,8 +1,8 @@
 package com.example.carwash.service;
 
-import com.example.carwash.dto.OrderCreateDto;
-import com.example.carwash.dto.OrderDto;
-import com.example.carwash.dto.OrderUpdateByUserDto;
+import com.example.carwash.dto.order.OrderCreateDto;
+import com.example.carwash.dto.order.OrderDto;
+import com.example.carwash.dto.order.OrderUpdateByUserDto;
 import com.example.carwash.model.*;
 import com.example.carwash.repository.BoxRepo;
 import com.example.carwash.repository.OfferRepo;

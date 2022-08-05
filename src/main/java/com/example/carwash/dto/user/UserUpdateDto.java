@@ -1,18 +1,18 @@
-package com.example.carwash.dto;
+package com.example.carwash.dto.user;
 
+import com.example.carwash.model.Role;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class UserCreateDto {
-    @NotBlank
+public class UserUpdateDto {
+    @NotNull
+    private Long id;
     private String firstName;
     private String lastName;
-    @NotBlank
     private String username;
-    private String password;
+    private Role role;
 }

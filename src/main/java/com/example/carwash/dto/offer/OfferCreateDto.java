@@ -1,4 +1,4 @@
-package com.example.carwash.dto;
+package com.example.carwash.dto.offer;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -16,6 +16,7 @@ public class OfferCreateDto {
     private String name;
     @NotNull
     private Duration duration;
+    @NotNull
     @Positive
     private BigDecimal price;
 }

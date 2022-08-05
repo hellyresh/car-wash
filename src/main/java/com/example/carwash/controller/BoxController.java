@@ -1,7 +1,7 @@
 package com.example.carwash.controller;
 
-import com.example.carwash.dto.BoxCreateDto;
-import com.example.carwash.dto.BoxDto;
+import com.example.carwash.dto.box.BoxCreateDto;
+import com.example.carwash.dto.box.BoxDto;
 import com.example.carwash.service.BoxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;

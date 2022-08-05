@@ -1,8 +1,8 @@
 package com.example.carwash.controller;
 
-import com.example.carwash.dto.OrderCreateDto;
-import com.example.carwash.dto.OrderDto;
-import com.example.carwash.dto.OrderUpdateByUserDto;
+import com.example.carwash.dto.order.OrderCreateDto;
+import com.example.carwash.dto.order.OrderDto;
+import com.example.carwash.dto.order.OrderUpdateByUserDto;
 import com.example.carwash.model.User;
 import com.example.carwash.service.OrderService;
 import org.springframework.web.bind.annotation.*;

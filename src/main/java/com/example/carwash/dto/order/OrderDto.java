@@ -1,4 +1,4 @@
-package com.example.carwash.dto;
+package com.example.carwash.dto.order;
 
 import com.example.carwash.model.Order;
 import com.example.carwash.model.OrderStatus;

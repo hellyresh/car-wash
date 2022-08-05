@@ -1,7 +1,7 @@
 package com.example.carwash.controller;
 
-import com.example.carwash.dto.OfferCreateDto;
-import com.example.carwash.dto.OfferDto;
+import com.example.carwash.dto.offer.OfferCreateDto;
+import com.example.carwash.dto.offer.OfferDto;
 import com.example.carwash.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

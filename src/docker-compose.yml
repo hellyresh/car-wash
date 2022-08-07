@@ -2,6 +2,7 @@ version: '3.3'
 
 services:
   postgres:
+    container_name: "car-wash"
     image: 'postgres:13'
     ports:
       - "5432:5432"

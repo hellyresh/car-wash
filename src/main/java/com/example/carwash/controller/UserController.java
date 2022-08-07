@@ -1,8 +1,11 @@
 package com.example.carwash.controller;
 
+import com.example.carwash.dto.order.OrderDto;
 import com.example.carwash.dto.user.UserCreateDto;
 import com.example.carwash.dto.user.UserDto;
 import com.example.carwash.dto.user.UserUpdateDto;
+import com.example.carwash.model.User;
+import com.example.carwash.service.OrderService;
 import com.example.carwash.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final OrderService orderService;
 
 
     @GetMapping
@@ -39,7 +43,7 @@ public class UserController {
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto updateUser(@PathVariable Long id, UserUpdateDto userUpdateDto) {
+    public UserDto updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
         return userService.updateUser(id, userUpdateDto);
     }
 
@@ -50,5 +54,10 @@ public class UserController {
         return userService.grantOperatorToUser(id);
     }
 
-
+    @PutMapping("orders/{id}/cancel")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderDto cancelOrderByUser(@PathVariable Long id) {
+        User currentUser = new User();
+        return orderService.cancel(id, currentUser);
+    }
 }

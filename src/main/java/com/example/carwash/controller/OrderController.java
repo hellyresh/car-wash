@@ -2,7 +2,6 @@ package com.example.carwash.controller;
 
 import com.example.carwash.dto.order.OrderCreateDto;
 import com.example.carwash.dto.order.OrderDto;
-import com.example.carwash.dto.order.OrderUpdateByUserDto;
 import com.example.carwash.model.User;
 import com.example.carwash.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -51,17 +50,19 @@ public class OrderController {
     }
 
     //TODO user + current user
-    @PutMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public OrderDto updateOrder(@PathVariable Long id, @Valid @RequestBody OrderUpdateByUserDto orderUpdateDto) {
-        return orderService.update(id, orderUpdateDto);
-    }
+//    @PutMapping("{id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public OrderDto updateOrder(@PathVariable Long id, @Valid @RequestBody OrderUpdateByUserDto orderUpdateDto) {
+//        return orderService.update(id, orderUpdateDto);
+//    }
 
-    @PatchMapping("{id}")
+    @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public String checkIn(@PathVariable Long id) {
         return orderService.checkIn(id);
     }
+
+
 
 
 }

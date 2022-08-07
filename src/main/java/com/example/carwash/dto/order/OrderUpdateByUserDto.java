@@ -3,13 +3,11 @@ package com.example.carwash.dto.order;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class OrderUpdateByUserDto {
-    private LocalDate date;
-    private LocalTime startTime;
+    private LocalDateTime dateTime;
     private Long offerId;
 }

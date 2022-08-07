@@ -7,8 +7,9 @@ import lombok.Setter;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -37,17 +38,19 @@ public class Order {
     @Column(name = "status")
     private OrderStatus status;
 
+    //todo rollback to datetime&duration, price, change constructor
     @Column(name = "date")
-    private LocalDate date;
+    private LocalDateTime dateTime;
 
-    @Column(name = "start_time")
-    private LocalTime startTime;
-
-    @Column(name = "end_time")
-    private LocalTime endTime;
+    @Column(name = "duration")
+    private Duration duration;
 
     @Column(name = "discount")
     private Integer discount;
+
+    @NotNull
+    @Column(name = "price", scale = 2)
+    private BigDecimal price;
 
     @ManyToOne
     @JoinColumn(name = "box_id", referencedColumnName = "id")
@@ -55,11 +58,13 @@ public class Order {
     private Box box;
 
     public Order(User user, Offer offer, OrderStatus status,
-                 LocalDate date, LocalTime startTime, LocalTime endTime, Box box) {
+                 LocalDateTime dateTime, Duration duration, BigDecimal price, Box box) {
         this.user = user;
         this.offer = offer;
         this.status = status;
-        this.date = date;
+        this.dateTime = dateTime;
+        this.duration = duration;
+        this.price = price;
         this.box = box;
     }
 

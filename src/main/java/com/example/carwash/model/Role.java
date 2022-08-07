@@ -1,7 +1,7 @@
 package com.example.carwash.model;
 
 public enum Role {
-    ADMIN,
+    USER,
     OPERATOR,
-    USER
+    ADMIN
 }

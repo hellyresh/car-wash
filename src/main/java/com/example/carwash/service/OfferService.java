@@ -38,6 +38,7 @@ public class OfferService {
             throw new EntityNotFoundException("Offer", id);
         }
         offerRepo.deleteById(id);
+        //todo delete string
         return "Offer with id = " + id + " successfully deleted";
     }
 

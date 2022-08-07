@@ -4,17 +4,18 @@ import com.example.carwash.model.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
+import javax.validation.constraints.Positive;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
 public class OrderUpdateByOperatorDto {
     private Long offerId;
     private OrderStatus status;
-    private LocalDate date;
-    private LocalTime startTime;
+    private LocalDateTime dateTime;
+    @Positive
+    private Duration duration;
+    @Positive
     private Integer discount;
-    private BigDecimal price;
 }

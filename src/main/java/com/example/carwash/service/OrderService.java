@@ -2,8 +2,6 @@ package com.example.carwash.service;
 
 import com.example.carwash.dto.order.OrderCreateDto;
 import com.example.carwash.dto.order.OrderDto;
-import com.example.carwash.dto.order.OrderUpdateByOperatorDto;
-import com.example.carwash.dto.order.OrderUpdateByUserDto;
 import com.example.carwash.exception.EntityNotFoundException;
 import com.example.carwash.model.*;
 import com.example.carwash.repository.BoxRepo;
@@ -15,7 +13,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -43,19 +40,31 @@ public class OrderService {
     }
 
     @Transactional
+    public OrderDto cancel(Long id, User currentUser) {
+        Order order = orderRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Order", id));
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepo.save(order);
+        return OrderDto.toDto(order);
+    }
+
+    @Transactional
     public OrderDto create(OrderCreateDto orderCreateDto, User currentUser) {
 
-        //todo automatic algorithm
-        Box box = new Box();
+
 
         Offer offer = offerRepo.findById(orderCreateDto.getOfferId())
                 .orElseThrow(() -> new EntityNotFoundException("Offer", orderCreateDto.getOfferId()));
 
+        //todo automatic algorithm
+        Box box = new Box();
+        Duration duration = calculateDuration(offer.getDuration(), box.getTimeCoefficient());
+        LocalDateTime dateTime = LocalDateTime.now();
         //TODO current user
 
         Order order = new Order(currentUser, offer, OrderStatus.SUBMITTED,
-                orderCreateDto.getDate(), orderCreateDto.getStartTime(),
-                countEndTime(offer.getDuration(), box.getTimeCoefficient(), orderCreateDto.getStartTime()), box);
+                dateTime, duration, offer.getPrice(), box);
         orderRepo.save(order);
         return OrderDto.toDto(order);
     }
@@ -65,57 +74,61 @@ public class OrderService {
     }
 
     //TODO validation date/time
-    @Transactional
-    public OrderDto update(Long id, OrderUpdateByUserDto orderUpdateDto) {
+//    @Transactional
+//    public OrderDto update(Long id, OrderUpdateByUserDto orderUpdateDto) {
+//
+//        Order order = orderRepo.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Order", id));
+//        if (orderUpdateDto.getOfferId() != null) {
+//            Offer offer = offerRepo.findById(orderUpdateDto.getOfferId())
+//                    .orElseThrow(() -> new EntityNotFoundException("Order", id));
+//        }
+//        if (orderUpdateDto.getDate() != null) {
+//            order.setDateTime(orderUpdateDto.getDateTime());
+//        }
+//        //todo automatic algorithm
+//        Box box = new Box();
+//        Duration duration = calculateDuration(offer.getDuration(), box.getTimeCoefficient();
+//        order.setDuration(calculateDuration());
+//
+//        //todo date time validation + box
+//
+//        orderRepo.save(order);
+//
+//        return OrderDto.toDto(order);
+//    }
 
-        Order order = orderRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Order", id));
+    //todo validation date/time and finished endpoint with discount
+//    @Transactional
+//    public OrderDto update(Long id, OrderUpdateByOperatorDto orderUpdateDto) {
+//
+//        Order order = orderRepo.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("Order", id));
+//
+//        if (orderUpdateDto.getStatus() != null) {
+//            order.setStatus(orderUpdateDto.getStatus());
+//        }
+//        if (orderUpdateDto.getDate() != null) {
+//            order.setDate(orderUpdateDto.getDate());
+//        }
+//        if (orderUpdateDto.getStartTime() != null) {
+//            order.setStartTime(orderUpdateDto.getStartTime());
+//        }
+//        if (orderUpdateDto.getOfferId() != null) {
+//            Offer offer = offerRepo.findById(orderUpdateDto.getOfferId())
+//                    .orElseThrow(() -> new EntityNotFoundException("Offer", orderUpdateDto.getOfferId()));
+//            order.setOffer(offer);
+//        }
+//        if (orderUpdateDto.getDiscount() != null) {
+//            order.setDiscount(orderUpdateDto.getDiscount());
+//        }
+//
+//        orderRepo.save(order);
+//
+//        return OrderDto.toDto(order);
+//    }
 
-        if (orderUpdateDto.getDate() != null) {
-            order.setDate(orderUpdateDto.getDate());
-        }
-        if (orderUpdateDto.getStartTime() != null) {
-            order.setStartTime(orderUpdateDto.getStartTime());
-        }
-
-        //todo date time validation + box
-
-        orderRepo.save(order);
-
-        return OrderDto.toDto(order);
-    }
-
-    //todo validation date/time and price/discount counting
-    @Transactional
-    public OrderDto update(Long id, OrderUpdateByOperatorDto orderUpdateDto) {
-
-        Order order = orderRepo.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Order", id));
-
-        if (orderUpdateDto.getStatus() != null) {
-            order.setStatus(orderUpdateDto.getStatus());
-        }
-        if (orderUpdateDto.getDate() != null) {
-            order.setDate(orderUpdateDto.getDate());
-        }
-        if (orderUpdateDto.getStartTime() != null) {
-            order.setStartTime(orderUpdateDto.getStartTime());
-        }
-        if (orderUpdateDto.getOfferId() != null) {
-            Offer offer = offerRepo.findById(orderUpdateDto.getOfferId())
-                    .orElseThrow(() -> new EntityNotFoundException("Offer", orderUpdateDto.getOfferId()));
-            order.setOffer(offer);
-        }
-        if (orderUpdateDto.getDiscount() != null) {
-            order.setDiscount(orderUpdateDto.getDiscount());
-        }
-
-        orderRepo.save(order);
-
-        return OrderDto.toDto(order);
-    }
-
-    //todo current operator
+    //todo current operator above
     public List<OrderDto> getBoxOrders() {
         return orderRepo.findAll().stream().map(OrderDto::toDto).toList();
     }
@@ -131,12 +144,14 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("Order", id));
         order.setStatus(OrderStatus.CHECKED_IN);
         orderRepo.save(order);
+        //todo move to FINISHED & delete string?
         orderBillService.createBill(order);
         return "You are successfully checked in";
     }
 
-    private LocalTime countEndTime(Duration baseDuration, Double timeCoefficient, LocalTime startTime) {
-        long durationInMinutes = Math.round(timeCoefficient * baseDuration.toMinutes());
-        return startTime.plusMinutes(durationInMinutes);
+    private Duration calculateDuration(Duration baseDuration, Double timeCoefficient) {
+        return Duration.ofMinutes(Math.round(timeCoefficient * baseDuration.toMinutes()));
     }
+
+
 }

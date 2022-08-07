@@ -19,11 +19,11 @@ public class OrderBillService {
 
     @Transactional
     public void createBill(Order order) {
-        OrderBill orderBill = new OrderBill(order, countPrice(order), LocalDateTime.now());
+        OrderBill orderBill = new OrderBill(order, calculatePrice(order), LocalDateTime.now());
         orderBillRepo.save(orderBill);
     }
 
-    protected BigDecimal countPrice(Order order) {
+    protected BigDecimal calculatePrice(Order order) {
         int discount = order.getDiscount();
         BigDecimal price = order.getOffer().getPrice();
         BigDecimal discountValue = price.multiply((BigDecimal.valueOf(discount * 0.01)));

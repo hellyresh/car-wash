@@ -4,21 +4,26 @@ import com.example.carwash.dto.user.UserCreateDto;
 import com.example.carwash.dto.user.UserDto;
 import com.example.carwash.dto.user.UserUpdateDto;
 import com.example.carwash.exception.EntityNotFoundException;
+import com.example.carwash.exception.UsernameAlreadyExistsException;
 import com.example.carwash.model.Role;
 import com.example.carwash.model.User;
 import com.example.carwash.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+
+import static com.example.carwash.model.Role.USER;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepo userRepo;
+    private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
 
 
@@ -40,6 +45,11 @@ public class UserService {
     @Transactional
     public UserDto createUser(UserCreateDto userCreateDto) {
         User user = modelMapper.map(userCreateDto, User.class);
+        user.setRole(USER);
+        if (userRepo.existsByUsername(user.getUsername())) {
+            throw new UsernameAlreadyExistsException(user.getUsername());
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
         return modelMapper.map(user, UserDto.class);
 

@@ -31,6 +31,6 @@ class OrderBillServiceTest {
         Order order = new Order();
         order.setOffer(offer);
         order.setDiscount(10);
-        assertEquals(new BigDecimal("1080.00"), orderBillService.countPrice(order));
+        assertEquals(new BigDecimal("1080.00"), orderBillService.calculatePrice(order));
     }
 }

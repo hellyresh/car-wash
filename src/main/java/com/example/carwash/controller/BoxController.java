@@ -28,7 +28,7 @@ public class BoxController {
         return boxService.create(boxCreateDto);
     }
 
-    //todo operator + current operator
+    //todo operator + current operator (box)
     @GetMapping("orders")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getBoxOrders() {
@@ -36,12 +36,12 @@ public class BoxController {
     }
 
     //todo operator + current operator
-    @PutMapping("orders/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public OrderDto updateOrder(@PathVariable Long id,
-                                @Valid @RequestBody OrderUpdateByOperatorDto orderUpdateDto) {
-        return orderService.update(id, orderUpdateDto);
-    }
+//    @PutMapping("orders/{id}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public OrderDto updateOrder(@PathVariable Long id,
+//                                @Valid @RequestBody OrderUpdateByOperatorDto orderUpdateDto) {
+//        return orderService.update(id, orderUpdateDto);
+//    }
 
     //todo admin
     @GetMapping("{id}/orders")

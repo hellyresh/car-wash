@@ -12,6 +12,7 @@ public class UserDto {
     private String firstName;
     private String lastName;
     private String username;
+
     public static UserDto toDto(User user) {
         UserDto userDTO = new UserDto();
         userDTO.setId(user.getId());

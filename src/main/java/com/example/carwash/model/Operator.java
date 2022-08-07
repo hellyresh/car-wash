@@ -4,19 +4,30 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
 @Setter
-@DiscriminatorValue("operator")
-public class Operator extends User {
+@Table(name = "operators")
+public class Operator {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "min_discount")
+    private Integer minDiscount;
+    @Column(name = "max_discount")
+    private Integer maxDiscount;
+
 
     @OneToOne
     @JoinColumn(name = "box_id", referencedColumnName = "id")
     private Box box;
 
-    @Column(name = "min_discount")
-    private int min_discount;
-    @Column(name = "max_discount")
-    private int max_discount;
+    @NotNull
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 }

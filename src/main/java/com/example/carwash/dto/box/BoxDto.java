@@ -12,7 +12,7 @@ public class BoxDto {
     private Long id;
     private LocalTime openTime;
     private LocalTime closeTime;
-    private double timeCoefficient;
+    private Double timeCoefficient;
 
     public static BoxDto toDto(Box box) {
         BoxDto boxDto = new BoxDto();

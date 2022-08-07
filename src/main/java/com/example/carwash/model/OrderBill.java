@@ -5,40 +5,38 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.time.Duration;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @Setter
-@Table(name = "offers")
+@Table(name = "bills")
 @NoArgsConstructor
-public class Offer {
+public class OrderBill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotBlank
-    @Column(name = "name")
-    private String name;
-
     @NotNull
-    @Column(name = "duration")
-    private Duration duration;
+    @OneToOne
+    @JoinColumn(name = "order_id", referencedColumnName = "id")
+    private Order order;
 
-    @Positive
     @NotNull
     @Column(name = "price", scale = 2)
     private BigDecimal price;
 
 
-    public Offer(String name, Duration duration, BigDecimal price) {
-        this.name = name;
-        this.duration = duration;
+    @Column(name = "date")
+    private LocalDateTime dateTime;
+
+
+    public OrderBill(Order order, BigDecimal price, LocalDateTime dateTime) {
+        this.order = order;
         this.price = price;
+        this.dateTime = dateTime;
     }
 }

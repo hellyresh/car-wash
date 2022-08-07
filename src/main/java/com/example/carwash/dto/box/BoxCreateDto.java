@@ -16,5 +16,5 @@ public class BoxCreateDto {
     private LocalTime closeTime;
     @NotNull
     @Positive
-    private double timeCoefficient;
+    private Double timeCoefficient;
 }

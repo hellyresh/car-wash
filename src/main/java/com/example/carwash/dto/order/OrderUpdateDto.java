@@ -4,20 +4,21 @@ import com.example.carwash.model.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
 public class OrderUpdateDto {
-    @NotNull
-    private Long id;
     private Long userId;
     private Long offerId;
     private OrderStatus status;
-    private Instant dateTime;
-    private int discount;
+    private LocalDate date;
+    private LocalTime startTime;
+    private Integer discount;
+    @Positive
     private BigDecimal price;
     private Long boxId;
 }

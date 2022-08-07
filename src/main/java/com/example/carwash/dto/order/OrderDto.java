@@ -5,8 +5,8 @@ import com.example.carwash.model.OrderStatus;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -15,9 +15,10 @@ public class OrderDto {
     private Long userId;
     private Long offerId;
     private OrderStatus status;
-    private Instant dateTime;
+    private LocalDate date;
+    private LocalTime startTime;
+    private LocalTime endTime;
     private int discount;
-    private BigDecimal price;
     private Long boxId;
 
     public static OrderDto toDto(Order order) {
@@ -26,9 +27,10 @@ public class OrderDto {
         orderDto.userId = order.getUser().getId();
         orderDto.offerId = order.getOffer().getId();
         orderDto.status = order.getStatus();
-        orderDto.dateTime = order.getDateTime();
+        orderDto.date = order.getDate();
+        orderDto.startTime = order.getStartTime();
+        orderDto.endTime = order.getEndTime();
         orderDto.discount = order.getDiscount();
-        orderDto.price = order.getPrice();
         orderDto.boxId = order.getBox().getId();
         return orderDto;
     }

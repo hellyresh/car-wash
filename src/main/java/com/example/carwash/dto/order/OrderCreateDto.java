@@ -4,9 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -16,12 +15,7 @@ public class OrderCreateDto {
     @NotNull
     private Long offerId;
     @NotNull
-    private Instant dateTime;
-    @Positive
-    private int discount;
+    private LocalDate date;
     @NotNull
-    @Positive
-    private BigDecimal price;
-    @NotNull
-    private Long boxId;
+    private LocalTime startTime;
 }

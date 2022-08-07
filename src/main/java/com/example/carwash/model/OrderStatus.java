@@ -1,8 +1,8 @@
 package com.example.carwash.model;
 
 public enum OrderStatus {
-    UNCONFIRMED,
-    CONFIRMED,
+    SUBMITTED,
+    CHECKED_IN,
     CANCELLED,
     FINISHED
 }

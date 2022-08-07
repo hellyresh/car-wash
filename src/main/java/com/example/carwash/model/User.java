@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,7 +12,6 @@ import java.util.Set;
 @Getter
 @Setter
 @Table(name = "users")
-@DiscriminatorColumn(name = "role_type")
 public class User {
 
     @Id
@@ -19,19 +19,24 @@ public class User {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @NotBlank
     @Column(name = "first_name")
     private String firstName;
 
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "username")
+    @NotBlank
+    @Column(name = "username", unique = true)
     private String username;
 
+    @NotBlank
     @Column(name = "password")
     private String password;
 
+    @NotBlank
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private Role role;
 
     @OneToMany(mappedBy = "user")

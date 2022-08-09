@@ -1,9 +1,9 @@
-package com.example.carwash.service;
+package com.example.carwash.security.service;
 
-import com.example.carwash.dto.user.AppUserDto;
 import com.example.carwash.model.User;
 import com.example.carwash.repository.UserRepo;
 import com.example.carwash.security.CustomUserDetails;
+import com.example.carwash.security.dto.AppUserDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -22,7 +22,6 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         User user = userRepo.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found with this username: " + username));
-        AppUserDto appUser = AppUserDto.toDto(user);
-        return new CustomUserDetails(appUser);
+        return new CustomUserDetails(AppUserDto.toDto(user));
     }
 }

@@ -2,24 +2,50 @@ package com.example.carwash.controller;
 
 import com.example.carwash.dto.user.UserCreateDto;
 import com.example.carwash.dto.user.UserDto;
+import com.example.carwash.security.dto.AuthRequest;
+import com.example.carwash.security.service.AuthService;
 import com.example.carwash.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.security.auth.message.AuthException;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
     private final UserService userService;
+    private final UserDetailsService userDetailsService;
+    private final AuthService authService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
-
-    @PostMapping("signup")
+    @PostMapping("api/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public UserDto registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
         return userService.createUser(userCreateDto);
     }
+
+
+    @PostMapping("api/login")
+    public ResponseEntity<?> authorize(@Valid @RequestBody AuthRequest request) throws AuthException {
+        try {
+            userDetailsService.loadUserByUsername(request.getUsername());
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.ok(authService.authUser(request));
+    }
+
+
+
 }

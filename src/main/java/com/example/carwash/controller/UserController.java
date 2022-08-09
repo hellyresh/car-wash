@@ -1,7 +1,6 @@
 package com.example.carwash.controller;
 
 import com.example.carwash.dto.order.OrderDto;
-import com.example.carwash.dto.user.UserCreateDto;
 import com.example.carwash.dto.user.UserDto;
 import com.example.carwash.dto.user.UserUpdateDto;
 import com.example.carwash.model.User;
@@ -35,11 +34,7 @@ public class UserController {
 //    }
 
     //TODO anon grant
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public UserDto registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
-        return userService.createUser(userCreateDto);
-    }
+
 
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)

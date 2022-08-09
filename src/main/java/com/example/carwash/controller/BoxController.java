@@ -3,7 +3,6 @@ package com.example.carwash.controller;
 import com.example.carwash.dto.box.BoxCreateDto;
 import com.example.carwash.dto.box.BoxDto;
 import com.example.carwash.dto.order.OrderDto;
-import com.example.carwash.dto.order.OrderUpdateByOperatorDto;
 import com.example.carwash.service.BoxService;
 import com.example.carwash.service.OrderService;
 import lombok.RequiredArgsConstructor;

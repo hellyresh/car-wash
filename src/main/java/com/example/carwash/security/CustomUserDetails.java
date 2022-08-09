@@ -1,7 +1,7 @@
 package com.example.carwash.security;
 
 
-import com.example.carwash.dto.user.AppUserDto;
+import com.example.carwash.security.dto.AppUserDto;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

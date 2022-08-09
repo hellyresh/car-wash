@@ -1,9 +1,8 @@
-package com.example.carwash.dto.user;
+package com.example.carwash.security.dto;
 
 import com.example.carwash.model.Role;
 import com.example.carwash.model.User;
 import lombok.Getter;
-import org.springframework.context.annotation.Bean;
 
 
 @Getter

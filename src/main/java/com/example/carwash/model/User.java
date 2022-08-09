@@ -2,6 +2,7 @@ package com.example.carwash.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -28,6 +29,7 @@ public class User {
 
     @NotBlank
     @Column(name = "username", unique = true)
+    @Length(min = 3, max = 20)
     private String username;
 
     @NotBlank

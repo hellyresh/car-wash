@@ -14,3 +14,10 @@ spring:
     url: jdbc:postgresql://localhost:5432/carwash_db
     username: postgres
     password: pass
+jwt:
+  secret-key: "secret-key-secret-key-secret-key-secret-key-secret-key"
+  bearer: "Bearer "
+  session-time:
+    access: 900000
+    refresh: 86400000
+  auth-header: "Authorization"

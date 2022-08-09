@@ -61,7 +61,7 @@ public class JwtFilter extends OncePerRequestFilter {
     private String parseToken(HttpServletRequest request) {
         String header = request.getHeader(headerAuth);
         if (StringUtils.hasText(request.getHeader(headerAuth)) && header.startsWith(bearer)) {
-            return headerAuth.substring(7);
+            return header.substring(7);
         }
         return null;
     }

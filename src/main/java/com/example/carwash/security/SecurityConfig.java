@@ -32,7 +32,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/api/signup").not().fullyAuthenticated()
                 .antMatchers("/api/login").not().fullyAuthenticated()
-                //.antMatchers( "/api/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .logout().logoutUrl("/api/logout").logoutSuccessUrl("/api/login");

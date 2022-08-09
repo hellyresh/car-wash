@@ -8,6 +8,7 @@ import com.example.carwash.service.OrderService;
 import com.example.carwash.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -22,6 +23,7 @@ public class UserController {
     private final OrderService orderService;
 
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getAllUsers() {

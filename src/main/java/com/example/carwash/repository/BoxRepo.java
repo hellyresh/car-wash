@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface BoxRepo extends JpaRepository<Box, Long> {
-
-
     @Query(value = """
             --New order
             --  start time:
@@ -76,56 +74,6 @@ public interface BoxRepo extends JpaRepository<Box, Long> {
             """, nativeQuery = true)
     Box findBestBox(@Param("dateTime") LocalDateTime dateTime, @Param("duration") Integer duration);
 
-    @Query(value = """
-            select b.* from boxes b
-            where
-                open_time <= cast(:dateTime as time)
-            and
-                close_time >= cast(cast(:dateTime as time) + interval '1 minute' *:duration as time)
-            and b.id = :boxId
 
-            except
-
-            select distinct b.* from boxes b
-            join orders ord  on b.id =ord.box_id
-
-            where
-                b.id = :boxId
-            and
-                cast(ord.date_time as date) = cast(:dateTime as date)
-            and
-                ord.status not in ('CANCELLED', 'FINISHED')
-            and(
-                (cast(ord.date_time as time) <= cast(:dateTime as time) 
-                and  
-                cast(:dateTime as time) < (cast(ord.date_time as time) + interval '1 minute' * ord.duration))
-                or(
-                    cast(ord.date_time as time) < cast(cast(:dateTime as time) + 
-                    interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time)
-                    and 
-                        cast(cast(:dateTime as time) + 
-                        interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time) <= 
-                        (cast(ord.date_time as time) + interval '1 minute' * ord.duration)
-                    )
-                or (
-                    cast(ord.date_time as time) 
-                        between 
-                            cast(:dateTime as time) 
-                        and 
-                            cast(cast(:dateTime as time) + 
-                            interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time)
-                    and
-                    (cast(ord.date_time as time) + interval '1 minute' * ord.duration) 
-                        between 
-                            cast(:dateTime as time) 
-                        and 
-                            cast(cast(:dateTime as time) + 
-                            interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time)
-                    )
-                ) 
-
-            """, nativeQuery = true)
-    List<Box> availableBox(@Param("boxId") Integer boxId, @Param("duration") Integer duration,
-                           @Param("dateTime") LocalDateTime dateTime);
 }
 

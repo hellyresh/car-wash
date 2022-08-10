@@ -1,5 +1,6 @@
 package com.example.carwash.controller;
 
+import com.example.carwash.dto.DateTimeIntervalDto;
 import com.example.carwash.dto.order.OrderCreateDto;
 import com.example.carwash.dto.order.OrderDto;
 import com.example.carwash.dto.order.OrderUpdateDto;
@@ -12,6 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,8 +28,8 @@ public class OrderController {
     @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     @GetMapping("search")
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> filterOrders(@RequestParam Long boxId, @RequestParam LocalDateTime dateTime) {
-        return orderService.showFilteredOrders(boxId, dateTime);
+    public List<OrderDto> filterOrders(@RequestParam Long boxId, DateTimeIntervalDto dateTimeIntervalDto) {
+        return orderService.showFilteredOrders(boxId, dateTimeIntervalDto);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'USER')")
@@ -78,6 +80,13 @@ public class OrderController {
     @ResponseStatus(HttpStatus.OK)
     public List<OrderBillDto> getUserBills() {
         return orderBillService.getBills();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("revenue")
+    @ResponseStatus(HttpStatus.OK)
+    public BigDecimal getRevenue(@Valid @RequestBody DateTimeIntervalDto dateTimeIntervalDto) {
+        return orderBillService.getRevenue(dateTimeIntervalDto);
     }
 
 

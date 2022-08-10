@@ -11,15 +11,11 @@ import java.math.BigDecimal;
 public class OfferDto {
     private Long id;
     private String name;
-    private Integer duration;
-    private BigDecimal price;
 
     public static OfferDto toDto(Offer offer) {
         OfferDto offerDto = new OfferDto();
         offerDto.id = offer.getId();
         offerDto.name = offer.getName();
-        offerDto.duration = offer.getDuration();
-        offerDto.price = offer.getPrice();
         return offerDto;
     }
 }

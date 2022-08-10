@@ -2,6 +2,8 @@ package com.example.carwash.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -41,6 +43,7 @@ public class User {
     private Role role;
 
     @OneToMany(mappedBy = "user")
+    @Fetch(FetchMode.JOIN)
     private Set<Order> orders = new HashSet<>();
 
 }

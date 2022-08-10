@@ -47,4 +47,5 @@ public class OfferController {
     public OfferDto updateOffer(@PathVariable Long id, @Valid @RequestBody OfferUpdateDto offerUpdateDto) {
         return offerService.update(id, offerUpdateDto);
     }
+
 }

@@ -1,21 +1,21 @@
 package com.example.carwash.service;
 
+import com.example.carwash.dto.DateTimeIntervalDto;
 import com.example.carwash.dto.order.OrderCreateDto;
 import com.example.carwash.dto.order.OrderDto;
 import com.example.carwash.dto.order.OrderUpdateDto;
 import com.example.carwash.dto.orderBill.OrderBillDto;
-import com.example.carwash.exception.AccessDeniedException;
-import com.example.carwash.exception.AvailableBoxNotFoundException;
-import com.example.carwash.exception.EntityNotFoundException;
-import com.example.carwash.exception.OrderCannotBeChangedException;
+import com.example.carwash.exception.*;
 import com.example.carwash.model.*;
 import com.example.carwash.repository.OrderRepo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.DateTimeException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -24,6 +24,7 @@ import static com.example.carwash.model.OrderStatus.*;
 import static com.example.carwash.model.Role.ADMIN;
 import static com.example.carwash.model.Role.OPERATOR;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -36,10 +37,12 @@ public class OrderService {
     private final BoxService boxService;
     private final Integer MIN_ADMIN_DISCOUNT = 0;
     private final Integer MAX_ADMIN_DISCOUNT = 100;
-    private final Integer MIN_BEFORE_ORDER = 20;
+    private final Integer MIN_BEFORE_ORDER = 10;
 
     //TODO specifications
-    public List<OrderDto> showFilteredOrders(Long boxId, LocalDateTime dateTime) {
+    public List<OrderDto> showFilteredOrders(Long boxId, DateTimeIntervalDto dateTimeIntervalDto) {
+        LocalDateTime startDate = dateTimeIntervalDto.getStartDateTime();
+        LocalDateTime endDate = dateTimeIntervalDto.getEndDateTime();
         return orderRepo.findAll().stream().map(OrderDto::toDto).toList();
     }
 
@@ -83,7 +86,7 @@ public class OrderService {
             throw new AvailableBoxNotFoundException();
         }
         Integer duration = getDuration(offer, box);
-        Order order = new Order(user, offer, OrderStatus.SUBMITTED,
+        Order order = new Order(user, offer, SUBMITTED,
                 dateTime, duration, offer.getPrice(), box);
         orderRepo.save(order);
         return OrderDto.toDto(order);
@@ -125,6 +128,9 @@ public class OrderService {
             order.setDateTime(orderUpdateDto.getDateTime());
         }
         Box box = boxService.getAvailableBox(order.getOffer(), order.getDateTime());
+        if (box == null) {
+            throw new AvailableBoxNotFoundException();
+        }
         Integer duration = getDuration(order.getOffer(), box);
         order.setBox(box);
         order.setDuration(duration);
@@ -142,6 +148,9 @@ public class OrderService {
         if (!order.getStatus().equals(SUBMITTED)) {
             throw new OrderCannotBeChangedException(id, order.getStatus(), CHECKED_IN);
         }
+        if (order.getDateTime().plusMinutes(order.getDuration()).isBefore(LocalDateTime.now())) {
+            throw new CheckInNotAvailableException();
+        }
         order.setStatus(CHECKED_IN);
         orderRepo.save(order);
     }
@@ -156,10 +165,10 @@ public class OrderService {
                 throw new AccessDeniedException();
             }
         }
-        if (!(order.getStatus().equals(CHECKED_IN))) {
+        if (!order.getStatus().equals(CHECKED_IN)) {
             throw new OrderCannotBeChangedException(id, order.getStatus(), FINISHED);
         }
-        order.setStatus(OrderStatus.FINISHED);
+        order.setStatus(FINISHED);
         orderRepo.save(order);
         OrderBill orderBill = orderBillService.createBill(order);
         return OrderBillDto.toDto(orderBill);
@@ -187,9 +196,23 @@ public class OrderService {
     }
 
     public void cancelNotCheckedInOrders() {
-        List<Order> closestOrders = orderRepo.findAllByStatusAndDateTime(SUBMITTED, LocalDateTime.now());
+        log.info("Daily automatic cancelling started");
+        List<Order> orders = orderRepo.findAllByStatusAndDateTime(LocalDateTime.now());
+        if (orders.isEmpty()) return;
+        for (Order order : orders) {
+            order.setStatus(CANCELLED);
+            orderRepo.save(order);
+            log.info("Order " + order.getId().toString() + " automatically cancelled");
+        }
     }
 
     public void cancelClosestNotCheckedInOrders() {
+        List<Order> closestOrders = orderRepo.findClosestSubmittedByDateTime(LocalDateTime.now());
+        if (closestOrders.isEmpty()) return;
+        for (Order order : closestOrders) {
+            order.setStatus(CANCELLED);
+            orderRepo.save(order);
+            log.info("Order " + order.getId().toString() + " automatically cancelled");
+        }
     }
 }

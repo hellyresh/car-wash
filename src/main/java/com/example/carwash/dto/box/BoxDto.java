@@ -19,7 +19,7 @@ public class BoxDto {
         boxDto.id = box.getId();
         boxDto.openTime = box.getOpenTime();
         boxDto.closeTime = box.getCloseTime();
-        boxDto.timeCoefficient = boxDto.getTimeCoefficient();
+        boxDto.timeCoefficient = box.getTimeCoefficient();
         return boxDto;
     }
 

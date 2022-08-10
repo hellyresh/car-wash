@@ -53,6 +53,13 @@ public class ControllerExceptionHandler {
         return e.getMessage();
     }
 
+    @ExceptionHandler(CheckInNotAvailableException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String resolveException(CheckInNotAvailableException e) {
+        return e.getMessage();
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)

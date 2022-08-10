@@ -1,5 +1,7 @@
 package com.example.carwash.service;
 
+import com.example.carwash.dto.DateTimeIntervalDto;
+import com.example.carwash.dto.order.OrderDto;
 import com.example.carwash.dto.orderBill.OrderBillDto;
 import com.example.carwash.model.Order;
 import com.example.carwash.model.OrderBill;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.DateTimeException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,5 +43,14 @@ public class OrderBillService {
 
     public List<OrderBillDto> getBills() {
         return orderBillRepo.findByUserId(userService.getCurrentUser().getId());
+    }
+
+    public BigDecimal getRevenue(DateTimeIntervalDto dateTimeIntervalDto) {
+        LocalDate startDate = dateTimeIntervalDto.getStartDateTime().toLocalDate();
+        LocalDate endDate = dateTimeIntervalDto.getEndDateTime().toLocalDate();
+        if (startDate.isAfter(endDate)) {
+            throw new DateTimeException("Incorrect interval");
+        }
+        return orderBillRepo.calculateRevenue(startDate, endDate);
     }
 }

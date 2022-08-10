@@ -10,11 +10,12 @@ import java.time.LocalTime;
 @Getter
 @Setter
 public class BoxCreateDto {
-    @NotNull
+    @NotNull(message = "lol")
     private LocalTime openTime;
+    @NotNull(message = "kek")
     @NotNull
     private LocalTime closeTime;
-    @NotNull
-    @Positive
+    @NotNull(message = "kek")
+    @Positive(message = "lol")
     private Double timeCoefficient;
 }

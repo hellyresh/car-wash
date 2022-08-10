@@ -5,14 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 
 @Getter
 @Setter
 public class OfferDto {
     private Long id;
     private String name;
-    private Duration duration;
+    private Integer duration;
     private BigDecimal price;
 
     public static OfferDto toDto(Offer offer) {

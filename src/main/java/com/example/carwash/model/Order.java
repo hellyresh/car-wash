@@ -5,10 +5,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -33,17 +31,15 @@ public class Order {
     @JoinColumn(name = "offer_id")
     private Offer offer;
 
-    @NotBlank
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private OrderStatus status;
 
-    //todo rollback to datetime&duration, price, change constructor
-    @Column(name = "date")
+    @Column(name = "date_time")
     private LocalDateTime dateTime;
 
     @Column(name = "duration")
-    private Duration duration;
+    private Integer duration;
 
     @Column(name = "discount")
     private Integer discount;
@@ -58,7 +54,7 @@ public class Order {
     private Box box;
 
     public Order(User user, Offer offer, OrderStatus status,
-                 LocalDateTime dateTime, Duration duration, BigDecimal price, Box box) {
+                 LocalDateTime dateTime, Integer duration, BigDecimal price, Box box) {
         this.user = user;
         this.offer = offer;
         this.status = status;

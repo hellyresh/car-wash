@@ -33,18 +33,13 @@ public class OfferService {
     }
 
     @Transactional
-    public String delete(Long id) {
-        if (!offerRepo.existsById(id)) {
-            throw new EntityNotFoundException("Offer", id);
-        }
-        offerRepo.deleteById(id);
-        //todo delete string
-        return "Offer with id = " + id + " successfully deleted";
+    public void delete(Long id) {
+        offerRepo.delete(getOffer(id));
     }
 
     @Transactional
     public OfferDto update(Long id, OfferUpdateDto offerUpdateDto) {
-        Offer offer = offerRepo.findById(id).orElseThrow(() -> new EntityNotFoundException("Offer", id));
+        Offer offer = getOffer(id);
         if (offerUpdateDto.getName() != null) {
             offer.setName(offerUpdateDto.getName());
         }
@@ -56,5 +51,10 @@ public class OfferService {
         }
         offerRepo.save(offer);
         return OfferDto.toDto(offer);
+    }
+
+    public Offer getOffer(Long id) {
+        return offerRepo.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Offer", "id", id.toString()));
     }
 }

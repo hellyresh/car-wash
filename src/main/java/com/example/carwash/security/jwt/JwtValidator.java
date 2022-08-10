@@ -1,4 +1,4 @@
-package com.example.carwash.security.service;
+package com.example.carwash.security.jwt;
 
 import com.example.carwash.exception.AuthException;
 import io.jsonwebtoken.*;
@@ -8,13 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.naming.AuthenticationException;
 
 @Component
 @Slf4j
 public class JwtValidator {
     @Value("${jwt.secret-key}")
     private String jwtSecret;
+
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -36,7 +36,7 @@ public class JwtValidator {
         return false;
     }
 
-    public Claims getClaims(String token) throws AuthenticationException {
+    public Claims getClaims(String token) {
         if (token == null) {
             throw new AuthException("Token doesn't exist");
         }

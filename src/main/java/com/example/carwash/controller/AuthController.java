@@ -6,20 +6,16 @@ import com.example.carwash.security.dto.AuthRequest;
 import com.example.carwash.security.service.AuthService;
 import com.example.carwash.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.validation.BindingResult;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.security.auth.message.AuthException;
 import javax.validation.Valid;
-import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
@@ -37,15 +33,13 @@ public class AuthController {
 
 
     @PostMapping("api/login")
-    public ResponseEntity<?> authorize(@Valid @RequestBody AuthRequest request) throws AuthException {
+    public ResponseEntity<?> authorize(@Valid @RequestBody AuthRequest request) {
         try {
             userDetailsService.loadUserByUsername(request.getUsername());
-        } catch (NoSuchElementException e) {
+        } catch (UsernameNotFoundException e) {
             return ResponseEntity.ok().build();
         }
         return ResponseEntity.ok(authService.authUser(request));
     }
-
-
 
 }

@@ -6,6 +6,7 @@ import com.example.carwash.dto.offer.OfferUpdateDto;
 import com.example.carwash.service.OfferService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,25 +20,28 @@ public class OfferController {
     private final OfferService offerService;
 
 
-    //TODO admin
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OfferDto createOffer(@Valid @RequestBody OfferCreateDto offerCreateDto) {
         return offerService.create(offerCreateDto);
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<OfferDto> getOffers() {
         return offerService.getAll();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String deleteOffer(@PathVariable Long id) {
-        return offerService.delete(id);
+    public void deleteOffer(@PathVariable Long id) {
+        offerService.delete(id);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public OfferDto updateOffer(@PathVariable Long id, @Valid @RequestBody OfferUpdateDto offerUpdateDto) {

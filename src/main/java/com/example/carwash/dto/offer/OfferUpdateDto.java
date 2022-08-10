@@ -5,14 +5,13 @@ import lombok.Setter;
 
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.time.Duration;
 
 @Getter
 @Setter
 public class OfferUpdateDto {
     private String name;
     @Positive
-    private Duration duration;
+    private Integer duration;
     @Positive
     private BigDecimal price;
 }

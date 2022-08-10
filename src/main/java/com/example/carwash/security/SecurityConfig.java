@@ -21,6 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomUserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
@@ -30,13 +31,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/api/signup").not().fullyAuthenticated()
-                .antMatchers("/api/login").not().fullyAuthenticated()
+                .antMatchers("/api/signup").anonymous()
+                .antMatchers("/api/login").anonymous()
                 .anyRequest().authenticated()
                 .and()
                 .logout().logoutUrl("/api/logout").logoutSuccessUrl("/api/login");
 
-                //.antMatchers( "/api/auth").permitAll()
+        //.antMatchers( "/api/auth").permitAll()
 
 //                .and()
 //                .formLogin()
@@ -55,8 +56,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
     @Bean
-    public PasswordEncoder getPasswordEncoder(){
+    public PasswordEncoder getPasswordEncoder() {
         return new BCryptPasswordEncoder(6);
     }
 }

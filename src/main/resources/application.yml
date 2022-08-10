@@ -18,6 +18,7 @@ jwt:
   secret-key: "secret-key-secret-key-secret-key-secret-key-secret-key"
   bearer: "Bearer "
   session-time:
-    access: 900000
+    access1: 900000
+    access: 86400000
     refresh: 86400000
   auth-header: "Authorization"

@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
-import java.time.Duration;
 
 @Entity
 @Getter
@@ -28,7 +27,7 @@ public class Offer {
 
     @NotNull
     @Column(name = "duration")
-    private Duration duration;
+    private Integer duration;
 
     @Positive
     @NotNull
@@ -36,7 +35,7 @@ public class Offer {
     private BigDecimal price;
 
 
-    public Offer(String name, Duration duration, BigDecimal price) {
+    public Offer(String name, Integer duration, BigDecimal price) {
         this.name = name;
         this.duration = duration;
         this.price = price;

@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Getter
@@ -17,7 +16,7 @@ public class OrderDto {
     private Long offerId;
     private OrderStatus status;
     private LocalDateTime dateTime;
-    private Duration duration;
+    private Integer duration;
     private Integer discount;
     private BigDecimal price;
     private Long boxId;

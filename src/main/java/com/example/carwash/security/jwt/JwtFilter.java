@@ -1,6 +1,5 @@
 package com.example.carwash.security.jwt;
 
-import com.example.carwash.security.service.JwtValidator;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.naming.AuthenticationException;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -41,7 +39,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        try{
+        try {
             String token = parseToken(request);
             if (token != null && jwtValidator.validateToken(token)) {
                 Claims claims = jwtValidator.getClaims(token);
@@ -51,11 +49,11 @@ public class JwtFilter extends OncePerRequestFilter {
                         null, authorities);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-        } catch (JwtException | AuthenticationException e) {
+        } catch (JwtException e) {
             throw new MalformedJwtException(String.format("Can not authorize token: %s",
                     request.getHeader(headerAuth)));
         }
-        filterChain.doFilter(request,response);
+        filterChain.doFilter(request, response);
     }
 
     private String parseToken(HttpServletRequest request) {
@@ -65,6 +63,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
         return null;
     }
+
     private Set<SimpleGrantedAuthority> getAuthorities(Claims claims) {
         var role = (List<Map<String, String>>) claims.get("role");
 

@@ -25,10 +25,52 @@ public class ControllerExceptionHandler {
                 .map(f -> f.getField() + " " + f.getDefaultMessage()).toList().toString();
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String resolveException(AccessDeniedException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(AvailableBoxNotFoundException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String resolveException(AvailableBoxNotFoundException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(AuthException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String resolveException(AuthException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(BoxAlreadyHasOperatorException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String resolveException(BoxAlreadyHasOperatorException e) {
+        return e.getMessage();
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseBody
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String resolveException(EntityNotFoundException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(OrderCannotBeChangedException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String resolveException(OrderCannotBeChangedException e) {
+        return e.getMessage();
+    }
+
+    @ExceptionHandler(RoleCannotBeChangedException.class)
+    @ResponseBody
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String resolveException(RoleCannotBeChangedException e) {
         return e.getMessage();
     }
 

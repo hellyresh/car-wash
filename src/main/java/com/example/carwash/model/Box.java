@@ -26,7 +26,7 @@ public class Box {
     @Column(name = "close_time", columnDefinition = "time default '22:00'")
     private LocalTime closeTime;
 
-    @Column(name = "coefficient")
+    @Column(name = "time_coefficient")
     @Positive
     @NotNull
     private Double timeCoefficient;

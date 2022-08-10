@@ -1,10 +1,12 @@
 package com.example.carwash.security.service;
 
+import com.example.carwash.exception.AuthException;
 import com.example.carwash.security.CustomUserDetails;
 import com.example.carwash.security.dto.AuthRequest;
 import com.example.carwash.security.dto.AuthResponse;
 import com.example.carwash.security.dto.RefreshRequest;
 import com.example.carwash.security.jwt.JwtGenerator;
+import com.example.carwash.security.jwt.JwtValidator;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,8 +15,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
-import javax.security.auth.message.AuthException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,14 +28,13 @@ public class AuthService {
     private final Map<String, String> tokensMap = new HashMap<>();
 
 
-
     public AuthResponse authUser(AuthRequest AuthRequest) throws AuthException {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(AuthRequest.getUsername(), AuthRequest.getPassword())
             );
         } catch (BadCredentialsException exception) {
-            throw new AuthException();
+            throw new AuthException("Wrong username or password");
         }
         UserDetails user = userService.loadUserByUsername(AuthRequest.getUsername());
         String accessToken = jwtGenerator.generateAccessToken((CustomUserDetails) user);
@@ -44,7 +43,7 @@ public class AuthService {
         return new AuthResponse(accessToken, refreshToken);
     }
 
-    public AuthResponse refreshToken(RefreshRequest refreshRequest) throws AuthException, AuthenticationException {
+    public AuthResponse refreshToken(RefreshRequest refreshRequest) throws AuthException {
         String refreshToken = refreshRequest.getRefreshToken();
         if (jwtValidator.validateToken(refreshToken)) {
             Claims claims = jwtValidator.getClaims(refreshToken);
@@ -58,7 +57,6 @@ public class AuthService {
         }
         throw new AuthException("Invalid refresh token");
     }
-
 
 
 }

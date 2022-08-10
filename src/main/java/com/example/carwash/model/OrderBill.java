@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -21,21 +22,29 @@ public class OrderBill {
     private Long id;
 
     @NotNull
-    @OneToOne
-    @JoinColumn(name = "order_id", referencedColumnName = "id")
-    private Order order;
+    @Column(name = "order_id")
+    private Long orderId;
+
+    @NotNull
+    @Column(name = "user_id")
+    private Long userId;
+
+    @NotBlank
+    @Column(name = "offer_name")
+    private String offerName;
 
     @NotNull
     @Column(name = "price", scale = 2)
     private BigDecimal price;
-
 
     @Column(name = "date")
     private LocalDateTime dateTime;
 
 
     public OrderBill(Order order, BigDecimal price, LocalDateTime dateTime) {
-        this.order = order;
+        this.orderId = order.getId();
+        this.userId = order.getUser().getId();
+        this.offerName = order.getOffer().getName();
         this.price = price;
         this.dateTime = dateTime;
     }

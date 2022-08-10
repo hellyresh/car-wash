@@ -2,10 +2,13 @@ package com.example.carwash.controller;
 
 import com.example.carwash.dto.order.OrderCreateDto;
 import com.example.carwash.dto.order.OrderDto;
-import com.example.carwash.model.User;
+import com.example.carwash.dto.order.OrderUpdateDto;
+import com.example.carwash.dto.orderBill.OrderBillDto;
+import com.example.carwash.service.OrderBillService;
 import com.example.carwash.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -18,51 +21,64 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+    private final OrderBillService orderBillService;
 
-    //TODO admin&operator
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
     @GetMapping("search")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> filterOrders(@RequestParam Long boxId, @RequestParam LocalDateTime dateTime) {
         return orderService.showFilteredOrders(boxId, dateTime);
     }
 
-    //TODO admin&operator
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'USER')")
     @PutMapping("{id}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public OrderDto cancelOrder(@PathVariable Long id) {
         return orderService.cancel(id);
     }
 
-    //TODO user
+    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'USER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDto create(@Valid @RequestBody OrderCreateDto orderCreateDto) {
-        return orderService.create(orderCreateDto, new User());
+    public OrderDto createOrder(@Valid @RequestBody OrderCreateDto orderCreateDto) {
+        return orderService.create(orderCreateDto);
     }
 
-    //TODO user
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> getUserOrders() {
-        //TODO current user
-        User user = new User();
-        return orderService.getUserOrders(user);
-    }
-
-    //TODO user + current user
-//    @PutMapping("{id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public OrderDto updateOrder(@PathVariable Long id, @Valid @RequestBody OrderUpdateByUserDto orderUpdateDto) {
-//        return orderService.update(id, orderUpdateDto);
-//    }
-
+    @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN', 'USER')")
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
-    public String checkIn(@PathVariable Long id) {
-        return orderService.checkIn(id);
+    public OrderDto updateOrder(@Valid @RequestBody OrderUpdateDto orderUpdateDto, @PathVariable Long id) {
+        return orderService.update(id, orderUpdateDto);
+    }
+
+    @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
+    @PutMapping("{id}/finish")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderBillDto finishOrder(@PathVariable Long id) {
+        return orderService.finish(id);
+    }
+
+    @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
+    @PutMapping("{id}/set-discount")
+    @ResponseStatus(HttpStatus.OK)
+    public OrderDto setOrderDiscount(@PathVariable Long id, @RequestParam Integer discount) {
+        return orderService.setDiscount(id, discount);
     }
 
 
+    @PreAuthorize("hasRole('USER')")
+    @PutMapping("{id}/checkin")
+    @ResponseStatus(HttpStatus.OK)
+    public void checkIn(@PathVariable Long id) {
+        orderService.checkIn(id);
+    }
+
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("bills")
+    @ResponseStatus(HttpStatus.OK)
+    public List<OrderBillDto> getUserBills() {
+        return orderBillService.getBills();
+    }
 
 
 }

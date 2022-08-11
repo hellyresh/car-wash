@@ -40,15 +40,15 @@ public interface BoxRepo extends JpaRepository<Box, Long> {
             and
                 ord.status not in ('CANCELLED', 'FINISHED')
             and(
-                (cast(ord.date_time as time) <= cast(:dateTime as time) 
-                and  
+                (cast(ord.date_time as time) <= cast(:dateTime as time)
+                and
                 cast(:dateTime as time) < (cast(ord.date_time as time) + interval '1 minute' * ord.duration))
                 or(
-                    cast(ord.date_time as time) < cast(cast(:dateTime as time) + 
+                    cast(ord.date_time as time) < cast(cast(:dateTime as time) +
                     interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time)
-                    and 
-                        cast(cast(:dateTime as time) + 
-                        interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time) <= 
+                    and
+                        cast(cast(:dateTime as time) +
+                        interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time) <=
                         (cast(ord.date_time as time) + interval '1 minute' * ord.duration)
                     )
                 or (

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -62,8 +61,8 @@ public class OrderController {
         return orderService.finish(id);
     }
 
-    @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
-    @PutMapping("{id}/set-discount")
+    @PreAuthorize("hasAnyAuthority('OPERATOR', 'ADMIN')")
+    @PutMapping("{id}/discount")
     @ResponseStatus(HttpStatus.OK)
     public OrderDto setOrderDiscount(@PathVariable Long id, @RequestParam Integer discount) {
         return orderService.setDiscount(id, discount);
@@ -81,7 +80,7 @@ public class OrderController {
     @GetMapping("bills")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderBillDto> getUserBills() {
-        return orderBillService.getBills();
+        return orderBillService.getUserBills();
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")

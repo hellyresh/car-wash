@@ -20,9 +20,9 @@ public class OperatorService {
     private final OperatorRepo operatorRepo;
     private final BoxService boxService;
 
-    public Operator getOperatorByUserId(Long userId) {
-        return (Operator) operatorRepo.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Operator", "userId", userId.toString()));
+    public Operator getOperatorByUser(User user) {
+        return operatorRepo.findByUserId(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Operator", "userId", user.getId().toString()));
     }
 
     public List<OperatorDto> getOperators() {
@@ -30,18 +30,19 @@ public class OperatorService {
     }
 
     @Transactional
-    public OperatorDto setOperatorsDiscount(Long operatorId, DiscountDto discountDto) {
-        Operator operator = operatorRepo.findById(operatorId)
-                .orElseThrow(() -> new EntityNotFoundException("Operator", "id", operatorId.toString()));
+    public OperatorDto setOperatorDiscount(Long operatorId, DiscountDto discountDto) {
+        Operator operator = getOperator(operatorId);
         if (discountDto.getMinDiscount() > discountDto.getMaxDiscount()) {
             throw new IllegalArgumentException("Min discount shouldn't be greater than max discount");
         }
         operator.setMinDiscount(discountDto.getMinDiscount());
         operator.setMaxDiscount(discountDto.getMaxDiscount());
+        operatorRepo.save(operator);
         return OperatorDto.toDto(operator);
     }
 
-    public void create(User user) {
+    @Transactional
+    public Operator create(User user) {
         Operator operator = new Operator();
         operator.setUser(user);
         operatorRepo.save(operator);
@@ -54,7 +55,7 @@ public class OperatorService {
     }
 
     @Transactional
-    public OperatorDto setOperatorsBox(Long id, Long boxId) {
+    public OperatorDto setOperatorBox(Long id, Long boxId) {
         if (operatorRepo.existsByBoxId(boxId)) {
             throw new BoxAlreadyHasOperatorException(boxId);
         }

@@ -21,6 +21,7 @@ public class BoxService {
 
     private final BoxRepo boxRepo;
 
+
     @Transactional
     public BoxDto create(BoxCreateDto boxCreateDto) {
         LocalTime openTime = boxCreateDto.getOpenTime();
@@ -32,7 +33,6 @@ public class BoxService {
         boxRepo.save(box);
         return BoxDto.toDto(box);
     }
-
 
     public List<BoxDto> getBoxes() {
         return boxRepo.findAll().stream().map(BoxDto::toDto).toList();

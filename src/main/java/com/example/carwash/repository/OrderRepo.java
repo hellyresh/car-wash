@@ -18,7 +18,8 @@ public interface OrderRepo extends JpaRepository<Order, Long>, JpaSpecificationE
             and
                 cast(o.date_time as date) < cast(:now as date)"""
             , nativeQuery = true)
-    List<Order> findAllByStatusAndDateTime(@Param("now") LocalDateTime now);
+    List<Order> findAllBySubmittedStatusAndDateTime(@Param("now") LocalDateTime now);
+
     @Query(value = """
             select distinct o.* from orders o
             where
@@ -30,7 +31,7 @@ public interface OrderRepo extends JpaRepository<Order, Long>, JpaSpecificationE
 
             """
             , nativeQuery = true)
-    List<Order> findClosestSubmittedByDateTime(@Param("now") LocalDateTime now);
+    List<Order> findAllClosestBySubmittedStatusByDateTime(@Param("now") LocalDateTime now);
 
     void findByBoxId(Long boxId);
 

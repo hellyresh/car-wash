@@ -33,13 +33,13 @@ public class UserService {
     @Transactional
     public OperatorDto grantOperatorToUser(Long id) {
         User user = getUser(id);
-        if (user.getRole().equals(USER)) {
-            user.setRole(OPERATOR);
-            userRepo.save(user);
-            operatorService.create(user);
-            return UserDto.toDto(user);
+        if (user.getRole() != USER) {
+            throw new RoleCannotBeChangedException(id, user.getRole(), OPERATOR);
         }
-        throw new RoleCannotBeChangedException(id, user.getRole(), OPERATOR);
+
+        user.setRole(OPERATOR);
+        userRepo.save(user);
+        return OperatorDto.toDto(operatorService.create(user));
     }
 
     public List<UserDto> getUsers() {
@@ -49,21 +49,16 @@ public class UserService {
 
     @Transactional
     public UserDto createUser(UserCreateDto userCreateDto) {
+        if (userRepo.existsByUsername(userCreateDto.getUsername())) {
+            throw new UsernameAlreadyExistsException(userCreateDto.getUsername());
+        }
         User user = modelMapper.map(userCreateDto, User.class);
         user.setRole(USER);
-        if (userRepo.existsByUsername(user.getUsername())) {
-            throw new UsernameAlreadyExistsException(user.getUsername());
-        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
         return modelMapper.map(user, UserDto.class);
-
     }
 
-    public UserDto updateUser(Long id, UserUpdateDto userUpdateDto) {
-
-        return null;
-    }
 
     public User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -75,6 +70,4 @@ public class UserService {
         return userRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", "id", id.toString()));
     }
-
-
 }

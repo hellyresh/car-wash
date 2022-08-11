@@ -43,7 +43,7 @@ public class AuthService {
         return new AuthResponse(accessToken, refreshToken);
     }
 
-    public AuthResponse refreshToken(RefreshRequest refreshRequest) throws AuthException {
+    public AuthResponse refreshToken(RefreshRequest refreshRequest) {
         String refreshToken = refreshRequest.getRefreshToken();
         if (jwtValidator.validateToken(refreshToken)) {
             Claims claims = jwtValidator.getClaims(refreshToken);

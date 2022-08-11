@@ -1,6 +1,5 @@
 package com.example.carwash.service;
 
-import com.example.carwash.dto.DateTimeIntervalDto;
 import com.example.carwash.dto.order.OrderCreateDto;
 import com.example.carwash.dto.order.OrderDto;
 import com.example.carwash.dto.order.OrderUpdateDto;
@@ -15,10 +14,8 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.DateTimeException;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import static com.example.carwash.model.OrderStatus.*;
 import static com.example.carwash.model.Role.ADMIN;
@@ -41,16 +38,14 @@ public class OrderService {
     private final Long HOURS_CHECKIN_AVAILABLE = 2L;
 
 
-
     @Transactional
     public OrderDto cancel(Long id) {
         User user = userService.getCurrentUser();
         Order order = getOrder(id);
-        isAccessGranted(order, user);
-        if (!isAccessGranted(order, user)) {
-            throw new AccessDeniedException();
+        if (isAccessDenied(order, user)) {
+            throw new CustomAccessDeniedException();
         }
-        if (order.getStatus().equals(CANCELLED) || order.getStatus().equals(FINISHED)) {
+        if (order.getStatus() == CANCELLED || order.getStatus() == FINISHED) {
             throw new OrderCannotBeChangedException(id, order.getStatus(), CANCELLED);
         }
         order.setStatus(CANCELLED);
@@ -58,12 +53,13 @@ public class OrderService {
         return OrderDto.toDto(order);
     }
 
-    private boolean isAccessGranted(Order order, User user) {
-        if (user == order.getUser() || user.getRole().equals(ADMIN)) {
-            return true;
-        } else if (user.getRole().equals(Role.OPERATOR)) {
-            Operator operator = getCurrentOperator();
-            return operator.getBox().equals(order.getBox());
+    private boolean isAccessDenied(Order order, User user) {
+        if (user.getId().equals(order.getUser().getId()) || user.getRole() == ADMIN) {
+            return false;
+        }
+        if (user.getRole() == OPERATOR) {
+            Operator operator = getCurrentOperator(user);
+            return isOrderRelatesToOperatorBox(order, operator);
         }
         return true;
     }
@@ -71,7 +67,7 @@ public class OrderService {
     @Transactional
     public OrderDto create(OrderCreateDto orderCreateDto) {
         LocalDateTime dateTime = orderCreateDto.getDateTime();
-        if (dateTime.isBefore(LocalDateTime.now().plus(Duration.ofMinutes(MIN_BEFORE_ORDER)))) {
+        if (dateTime.isBefore(LocalDateTime.now().plus(Duration.ofMinutes(MINUTES_BEFORE_ORDER)))) {
             throw new DateTimeException("Ordering is no longer available at this time");
         }
         User user = userService.getCurrentUser();
@@ -80,21 +76,22 @@ public class OrderService {
         if (box == null) {
             throw new AvailableBoxNotFoundException();
         }
-        Integer duration = getDuration(offer, box);
+        int minutesDuration = getMinutesDuration(offer, box);
         Order order = new Order(user, offer, SUBMITTED,
-                dateTime, duration, offer.getPrice(), box);
+                dateTime, minutesDuration, offer.getPrice(), box);
         orderRepo.save(order);
         return OrderDto.toDto(order);
     }
 
-    private int getDuration(Offer offer, Box box) {
+    private int getMinutesDuration(Offer offer, Box box) {
         return Math.toIntExact(Math.round(offer.getDuration() * box.getTimeCoefficient()));
     }
 
 
     public List<OrderDto> getUserOrders(Long id) {
-        User user = userService.getCurrentUser();
-        if (Objects.equals(user.getId(), id) || user.getRole().equals(ADMIN)) {
+        User currentUser = userService.getCurrentUser();
+        if (id.equals(currentUser.getId()) || currentUser.getRole() == ADMIN) {
+            User user = userService.getUser(id);
             return user.getOrders().stream().map(OrderDto::toDto).toList();
         }
         throw new CustomAccessDeniedException();
@@ -113,7 +110,7 @@ public class OrderService {
         if (isAccessDenied(order, user)) {
             throw new CustomAccessDeniedException();
         }
-        if (!(order.getStatus().equals(SUBMITTED) || (order.getStatus().equals(CHECKED_IN)))) {
+        if (order.getStatus() != SUBMITTED && order.getStatus() != CHECKED_IN) {
             throw new OrderCannotBeChangedException(id, order.getStatus());
         }
         if (orderUpdateDto.getOfferId() != null) {
@@ -126,25 +123,29 @@ public class OrderService {
         if (box == null) {
             throw new AvailableBoxNotFoundException();
         }
-        Integer duration = getDuration(order.getOffer(), box);
+        Integer minutesDuration = getMinutesDuration(order.getOffer(), box);
         order.setBox(box);
-        order.setDuration(duration);
+        order.setDuration(minutesDuration);
         orderRepo.save(order);
         return OrderDto.toDto(order);
     }
 
     @Transactional
-    public void checkIn(Long id) {
-        Order order = getOrder(id);
+    public OrderDto checkIn(Long id) {
         User user = userService.getCurrentUser();
-        if (order.getUser() != user) {
-            throw new AccessDeniedException();
+        Order order = getOrder(id);
+        if (isAccessDenied(order, user)) {
+            throw new CustomAccessDeniedException();
         }
-        if (!order.getStatus().equals(SUBMITTED)) {
+        if (order.getStatus() != SUBMITTED) {
             throw new OrderCannotBeChangedException(id, order.getStatus(), CHECKED_IN);
         }
-        if (order.getDateTime().plusMinutes(order.getDuration()).isBefore(LocalDateTime.now())) {
-            throw new CheckInNotAvailableException();
+        LocalDateTime endDateTime = order.getDateTime().plusMinutes(order.getDuration());
+        if (endDateTime.isBefore(LocalDateTime.now())) {
+            throw new CheckInNotAvailableException("already");
+        }
+        if (LocalDateTime.now().plusHours(HOURS_CHECKIN_AVAILABLE).isBefore(order.getDateTime())) {
+            throw new CheckInNotAvailableException("yet");
         }
         order.setStatus(CHECKED_IN);
         orderRepo.save(order);
@@ -155,13 +156,14 @@ public class OrderService {
     @Transactional
     public OrderBillDto finish(Long id) {
         Order order = getOrder(id);
-        if (userService.getCurrentUser().getRole().equals(OPERATOR)) {
-            Operator operator = getCurrentOperator();
-            if (!operator.getBox().equals(order.getBox())) {
-                throw new AccessDeniedException();
+        User user = userService.getCurrentUser();
+        if (user.getRole() == OPERATOR) {
+            Operator operator = getCurrentOperator(user);
+            if (!isOrderRelatesToOperatorBox(order, operator)) {
+                throw new CustomAccessDeniedException();
             }
         }
-        if (!order.getStatus().equals(CHECKED_IN)) {
+        if (order.getStatus() != CHECKED_IN) {
             throw new OrderCannotBeChangedException(id, order.getStatus(), FINISHED);
         }
         order.setStatus(FINISHED);
@@ -174,19 +176,25 @@ public class OrderService {
         return operator.getBox().getId().equals(order.getBox().getId());
     }
 
+    @Transactional
     public OrderDto setDiscount(Long id, Integer discount) {
         Order order = getOrder(id);
-        if (userService.getCurrentUser().getRole().equals(OPERATOR)) {
-            Operator operator = getCurrentOperator();
-            if (!operator.getBox().equals(order.getBox())) {
-                throw new AccessDeniedException();
-            } else if (operator.getMinDiscount() > discount || operator.getMaxDiscount() < discount) {
+        User user = userService.getCurrentUser();
+        if (user.getRole() == OPERATOR) {
+            Operator operator = getCurrentOperator(user);
+            if (!isOrderRelatesToOperatorBox(order, operator)) {
+                throw new CustomAccessDeniedException();
+            }
+            Integer minDiscount = operator.getMinDiscount();
+            Integer maxDiscount = operator.getMaxDiscount();
+            if (minDiscount == null || maxDiscount == null || discount < minDiscount || discount > maxDiscount) {
                 throw new OrderCannotBeChangedException(operator.getMinDiscount(), operator.getMaxDiscount());
             }
         } else if (discount < MIN_ADMIN_DISCOUNT || discount > MAX_ADMIN_DISCOUNT) {
             throw new OrderCannotBeChangedException(MIN_ADMIN_DISCOUNT, MAX_ADMIN_DISCOUNT);
         }
         order.setDiscount(discount);
+        orderRepo.save(order);
         return OrderDto.toDto(order);
     }
 
@@ -194,10 +202,10 @@ public class OrderService {
         return operatorService.getOperatorByUser(currentUser);
     }
 
+    @Transactional
     public void cancelNotCheckedInOrders() {
         log.info("Daily automatic cancelling started");
-        List<Order> orders = orderRepo.findAllByStatusAndDateTime(LocalDateTime.now());
-        if (orders.isEmpty()) return;
+        List<Order> orders = orderRepo.findAllBySubmittedStatusAndDateTime(LocalDateTime.now());
         for (Order order : orders) {
             order.setStatus(CANCELLED);
             orderRepo.save(order);
@@ -205,9 +213,9 @@ public class OrderService {
         }
     }
 
+    @Transactional
     public void cancelClosestNotCheckedInOrders() {
-        List<Order> closestOrders = orderRepo.findClosestSubmittedByDateTime(LocalDateTime.now());
-        if (closestOrders.isEmpty()) return;
+        List<Order> closestOrders = orderRepo.findAllClosestBySubmittedStatusByDateTime(LocalDateTime.now());
         for (Order order : closestOrders) {
             order.setStatus(CANCELLED);
             orderRepo.save(order);

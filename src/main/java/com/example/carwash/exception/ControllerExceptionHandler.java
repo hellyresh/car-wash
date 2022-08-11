@@ -51,10 +51,17 @@ public class ControllerExceptionHandler {
         return e.getMessage();
     }
 
-    @ExceptionHandler(AvailableBoxNotFoundException.class)
+    @ExceptionHandler(value = {
+            AvailableBoxNotFoundException.class,
+            AuthException.class,
+            BoxAlreadyHasOperatorException.class,
+            CheckInNotAvailableException.class,
+            OrderCannotBeChangedException.class,
+            RoleCannotBeChangedException.class,
+            UsernameAlreadyExistsException.class})
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String resolveException(AvailableBoxNotFoundException e) {
+    public String resolveException(Throwable e) {
         return e.getMessage();
     }
 

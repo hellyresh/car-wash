@@ -1,7 +1,6 @@
 package com.example.carwash.service;
 
 import com.example.carwash.dto.DateTimeIntervalDto;
-import com.example.carwash.dto.order.OrderDto;
 import com.example.carwash.dto.orderBill.OrderBillDto;
 import com.example.carwash.model.Order;
 import com.example.carwash.model.OrderBill;
@@ -24,6 +23,7 @@ public class OrderBillService {
     private final OrderBillRepo orderBillRepo;
     private final UserService userService;
 
+
     @Transactional
     public OrderBill createBill(Order order) {
         Integer discount = order.getDiscount();
@@ -41,7 +41,7 @@ public class OrderBillService {
         return price.subtract(discountValue).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public List<OrderBillDto> getBills() {
+    public List<OrderBillDto> getUserBills() {
         return orderBillRepo.findByUserId(userService.getCurrentUser().getId());
     }
 

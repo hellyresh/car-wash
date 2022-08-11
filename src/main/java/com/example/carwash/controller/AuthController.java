@@ -27,7 +27,6 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("api/signup")
-    @ResponseStatus(HttpStatus.CREATED)
     public UserDto registerUser(@Valid @RequestBody UserCreateDto userCreateDto) {
         return userService.createUser(userCreateDto);
     }
@@ -38,7 +37,7 @@ public class AuthController {
         try {
             userDetailsService.loadUserByUsername(request.getUsername());
         } catch (UsernameNotFoundException e) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.status(FORBIDDEN).build();
         }
         return ResponseEntity.ok(authService.authUser(request));
     }

@@ -6,13 +6,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalTime;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class AutoCancellationOrder {
+public class AutoCancellationOrderService {
+
     private final OrderService orderService;
+
     @Scheduled(cron = "@midnight")
     public void everyMidnight() {
         orderService.cancelNotCheckedInOrders();

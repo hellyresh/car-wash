@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 public class AuthRequest {
-    @NotBlank(message = "Name should not be empty")
+    @NotBlank
     private String username;
     @NotBlank
     private String password;

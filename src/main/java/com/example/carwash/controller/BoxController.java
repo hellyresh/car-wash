@@ -27,7 +27,6 @@ public class BoxController {
 
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public List<BoxDto> getBoxes() {
         return boxService.getBoxes();
     }
@@ -41,6 +40,4 @@ public class BoxController {
     public void delete(@PathVariable Long id) {
         boxService.delete(id);
     }
-
-
 }

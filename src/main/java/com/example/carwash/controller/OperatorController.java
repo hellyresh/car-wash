@@ -23,16 +23,14 @@ public class OperatorController {
         return operatorService.getOperators();
     }
 
-    @PutMapping("{id}/assign-discount-interval")
-    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("{id}/discount")
     public OperatorDto setDiscountToOperator(@PathVariable Long id, @Valid @RequestBody DiscountDto discountDto) {
-        return operatorService.setOperatorsDiscount(id, discountDto);
+        return operatorService.setOperatorDiscount(id, discountDto);
     }
 
-    @PutMapping("{id}/assign-box/{boxId}")
-    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("{id}/box/{boxId}")
     public OperatorDto setBoxToOperator(@PathVariable Long id, @PathVariable Long boxId) {
-        return operatorService.setOperatorsBox(id, boxId);
+        return operatorService.setOperatorBox(id, boxId);
     }
 
     @DeleteMapping("{id}/box")

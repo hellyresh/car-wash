@@ -65,6 +65,7 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private Set<SimpleGrantedAuthority> getAuthorities(Claims claims) {
+        @SuppressWarnings("unchecked")
         var role = (List<Map<String, String>>) claims.get("role");
 
         return role.stream()

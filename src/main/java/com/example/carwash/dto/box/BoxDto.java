@@ -22,5 +22,4 @@ public class BoxDto {
         boxDto.timeCoefficient = box.getTimeCoefficient();
         return boxDto;
     }
-
 }

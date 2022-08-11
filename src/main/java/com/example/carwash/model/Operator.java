@@ -22,9 +22,11 @@ public class Operator {
     @Positive
     @Max(100)
     private Integer minDiscount;
+
+    @Positive
+    @Max(100)
     @Column(name = "max_discount")
     private Integer maxDiscount;
-
 
     @OneToOne
     @JoinColumn(name = "box_id", referencedColumnName = "id", unique = true)

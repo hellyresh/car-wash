@@ -4,7 +4,6 @@ import com.example.carwash.dto.operator.DiscountDto;
 import com.example.carwash.dto.operator.OperatorDto;
 import com.example.carwash.service.OperatorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +11,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasAuthority('ADMIN')")
 @RequestMapping("api/operators")
 @RequiredArgsConstructor
 public class OperatorController {
@@ -20,7 +19,6 @@ public class OperatorController {
 
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public List<OperatorDto> getAllOperators() {
         return operatorService.getOperators();
     }
@@ -37,8 +35,12 @@ public class OperatorController {
         return operatorService.setOperatorsBox(id, boxId);
     }
 
+    @DeleteMapping("{id}/box")
+    public OperatorDto deleteBoxFromOperator(@PathVariable Long id) {
+        return operatorService.deleteOperatorBox(id);
+    }
+
     @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
     public void deleteOperator(@PathVariable Long id) {
         operatorService.delete(id);
     }

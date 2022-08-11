@@ -37,8 +37,8 @@ public class OrderBillService {
     protected BigDecimal calculatePrice(Order order) {
         Integer discount = order.getDiscount();
         BigDecimal price = order.getOffer().getPrice();
-        BigDecimal discountValue = price.multiply((BigDecimal.valueOf(discount * 0.01)));
-        return price.add(discountValue.negate()).setScale(2, RoundingMode.HALF_UP);
+        BigDecimal discountValue = price.multiply(BigDecimal.valueOf(discount / 100.0));
+        return price.subtract(discountValue).setScale(2, RoundingMode.HALF_UP);
     }
 
     public List<OrderBillDto> getBills() {

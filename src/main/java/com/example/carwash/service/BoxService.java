@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -22,6 +23,11 @@ public class BoxService {
 
     @Transactional
     public BoxDto create(BoxCreateDto boxCreateDto) {
+        LocalTime openTime = boxCreateDto.getOpenTime();
+        LocalTime closeTime = boxCreateDto.getCloseTime();
+        if (closeTime.isBefore(openTime)) {
+            throw new IllegalArgumentException("openTime should be before closeTime");
+        }
         Box box = new Box(boxCreateDto.getOpenTime(), boxCreateDto.getCloseTime(), boxCreateDto.getTimeCoefficient());
         boxRepo.save(box);
         return BoxDto.toDto(box);

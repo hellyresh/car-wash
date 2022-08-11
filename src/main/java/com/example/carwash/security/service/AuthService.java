@@ -28,7 +28,7 @@ public class AuthService {
     private final Map<String, String> tokensMap = new HashMap<>();
 
 
-    public AuthResponse authUser(AuthRequest AuthRequest) throws AuthException {
+    public AuthResponse authUser(AuthRequest AuthRequest) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(AuthRequest.getUsername(), AuthRequest.getPassword())

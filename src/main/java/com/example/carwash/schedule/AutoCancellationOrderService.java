@@ -14,12 +14,12 @@ import java.time.LocalTime;
 public class AutoCancellationOrder {
     private final OrderService orderService;
     @Scheduled(cron = "@midnight")
-    public void scheduledTaskByCorn() {
+    public void everyMidnight() {
         orderService.cancelNotCheckedInOrders();
     }
 
-    @Scheduled(cron = "0 0/1 * * * ?")
-    private void scheduledTask() {
+    @Scheduled(cron = "0 0/3 * * * ?")
+    private void everyMinute() {
         orderService.cancelClosestNotCheckedInOrders();
     }
 }

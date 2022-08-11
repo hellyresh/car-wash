@@ -25,35 +25,37 @@ public class OrderController {
     private final OrderService orderService;
     private final OrderBillService orderBillService;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR')")
-    @GetMapping("search")
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OPERATOR')")
+    @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<OrderDto> filterOrders(@RequestParam Long boxId, DateTimeIntervalDto dateTimeIntervalDto) {
-        return orderService.showFilteredOrders(boxId, dateTimeIntervalDto);
+    public List<OrderDto> getAllOrders() {
+        return orderService.getOrders();
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'USER')")
+
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OPERATOR', 'USER')")
     @PutMapping("{id}/cancel")
     @ResponseStatus(HttpStatus.OK)
     public OrderDto cancelOrder(@PathVariable Long id) {
         return orderService.cancel(id);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'OPERATOR', 'USER')")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'OPERATOR', 'USER')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderDto createOrder(@Valid @RequestBody OrderCreateDto orderCreateDto) {
         return orderService.create(orderCreateDto);
     }
 
-    @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN', 'USER')")
+    @PreAuthorize("hasAnyAuthority('OPERATOR', 'ADMIN', 'USER')")
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public OrderDto updateOrder(@Valid @RequestBody OrderUpdateDto orderUpdateDto, @PathVariable Long id) {
         return orderService.update(id, orderUpdateDto);
     }
 
-    @PreAuthorize("hasAnyRole('OPERATOR', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('OPERATOR', 'ADMIN')")
     @PutMapping("{id}/finish")
     @ResponseStatus(HttpStatus.OK)
     public OrderBillDto finishOrder(@PathVariable Long id) {
@@ -68,21 +70,21 @@ public class OrderController {
     }
 
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyAuthority('USER', 'OPERATOR', 'ADMIN')")
     @PutMapping("{id}/checkin")
     @ResponseStatus(HttpStatus.OK)
-    public void checkIn(@PathVariable Long id) {
-        orderService.checkIn(id);
+    public OrderDto checkIn(@PathVariable Long id) {
+        return orderService.checkIn(id);
     }
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAuthority('USER')")
     @GetMapping("bills")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderBillDto> getUserBills() {
         return orderBillService.getBills();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("revenue")
     @ResponseStatus(HttpStatus.OK)
     public BigDecimal getRevenue(@Valid @RequestBody DateTimeIntervalDto dateTimeIntervalDto) {

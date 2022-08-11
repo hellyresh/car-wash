@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public interface BoxRepo extends JpaRepository<Box, Long> {
     @Query(value = """
@@ -53,23 +52,23 @@ public interface BoxRepo extends JpaRepository<Box, Long> {
                         (cast(ord.date_time as time) + interval '1 minute' * ord.duration)
                     )
                 or (
-                    cast(ord.date_time as time) 
-                        between 
-                            cast(:dateTime as time) 
-                        and 
-                            cast(cast(:dateTime as time) + 
+                    cast(ord.date_time as time)
+                        between
+                            cast(:dateTime as time)
+                        and
+                            cast(cast(:dateTime as time) +
                             interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time)
                     and
-                    (cast(ord.date_time as time) + interval '1 minute' * ord.duration) 
-                        between 
-                            cast(:dateTime as time) 
-                        and 
-                            cast(cast(:dateTime as time) + 
+                    (cast(ord.date_time as time) + interval '1 minute' * ord.duration)
+                        between
+                            cast(:dateTime as time)
+                        and
+                            cast(cast(:dateTime as time) +
                             interval '1 minute' * cast(ceil(b.time_coefficient *:duration) as int) as time)
                     )
-                ) 
+                )
                 
-            order by time_coefficient desc 
+            order by time_coefficient desc
             limit 1
             """, nativeQuery = true)
     Box findBestBox(@Param("dateTime") LocalDateTime dateTime, @Param("duration") Integer duration);

@@ -1,5 +1,6 @@
 package com.example.carwash.controller;
 
+import com.example.carwash.dto.operator.OperatorDto;
 import com.example.carwash.dto.order.OrderDto;
 import com.example.carwash.dto.user.UserDto;
 import com.example.carwash.dto.user.UserUpdateDto;
@@ -22,7 +23,7 @@ public class UserController {
     private final OrderService orderService;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<UserDto> getAllUsers() {
@@ -30,22 +31,15 @@ public class UserController {
     }
 
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public UserDto updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDto userUpdateDto) {
-        return userService.updateUser(id, userUpdateDto);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("{id}/grant")
     @ResponseStatus(HttpStatus.OK)
-    public UserDto grantOperatorToUser(@PathVariable Long id) {
+    public OperatorDto grantOperatorToUser(@PathVariable Long id) {
         return userService.grantOperatorToUser(id);
     }
 
 
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('USER', 'ADMIN')")
     @GetMapping("{id}/orders")
     @ResponseStatus(HttpStatus.OK)
     public List<OrderDto> getUserOrders(@PathVariable Long id) {

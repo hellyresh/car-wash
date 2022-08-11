@@ -3,9 +3,9 @@ package com.example.carwash.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
@@ -21,8 +21,8 @@ public class Offer {
     @Column(name = "id")
     private Long id;
 
-    @NotBlank
-    @Column(name = "name")
+    @Column(name = "name", length = 30)
+    @Length(min = 4, max = 30)
     private String name;
 
     @NotNull
@@ -34,10 +34,4 @@ public class Offer {
     @Column(name = "price", scale = 2)
     private BigDecimal price;
 
-
-    public Offer(String name, Integer duration, BigDecimal price) {
-        this.name = name;
-        this.duration = duration;
-        this.price = price;
-    }
 }

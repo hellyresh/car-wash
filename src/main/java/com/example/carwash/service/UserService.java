@@ -1,8 +1,8 @@
 package com.example.carwash.service;
 
+import com.example.carwash.dto.operator.OperatorDto;
 import com.example.carwash.dto.user.UserCreateDto;
 import com.example.carwash.dto.user.UserDto;
-import com.example.carwash.dto.user.UserUpdateDto;
 import com.example.carwash.exception.EntityNotFoundException;
 import com.example.carwash.exception.RoleCannotBeChangedException;
 import com.example.carwash.exception.UsernameAlreadyExistsException;
@@ -31,7 +31,7 @@ public class UserService {
 
 
     @Transactional
-    public UserDto grantOperatorToUser(Long id) {
+    public OperatorDto grantOperatorToUser(Long id) {
         User user = getUser(id);
         if (user.getRole().equals(USER)) {
             user.setRole(OPERATOR);
@@ -64,7 +64,6 @@ public class UserService {
 
         return null;
     }
-
 
     public User getCurrentUser() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

@@ -21,7 +21,9 @@ class OrderBillServiceTest {
 
     @MockBean
     OrderBillRepo orderBillRepo;
-    OrderBillService orderBillService = new OrderBillService(orderBillRepo);
+    @MockBean
+    UserService userService;
+    OrderBillService orderBillService = new OrderBillService(orderBillRepo, userService);
 
     @Test
     @DisplayName("Test operations with BigDecimal")

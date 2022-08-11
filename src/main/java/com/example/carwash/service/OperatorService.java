@@ -45,6 +45,7 @@ public class OperatorService {
         Operator operator = new Operator();
         operator.setUser(user);
         operatorRepo.save(operator);
+        return operator;
     }
 
     public Operator getOperator(Long id) {
@@ -66,5 +67,13 @@ public class OperatorService {
     @Transactional
     public void delete(Long id) {
         operatorRepo.delete(getOperator(id));
+    }
+
+    @Transactional
+    public OperatorDto deleteOperatorBox(Long id) {
+        Operator operator = getOperator(id);
+        operator.setBox(null);
+        operatorRepo.save(operator);
+        return OperatorDto.toDto(operator);
     }
 }

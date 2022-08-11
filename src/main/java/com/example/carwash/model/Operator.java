@@ -4,7 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
 @Entity
 @Getter
@@ -17,17 +19,19 @@ public class Operator {
     private Long id;
 
     @Column(name = "min_discount")
+    @Positive
+    @Max(100)
     private Integer minDiscount;
     @Column(name = "max_discount")
     private Integer maxDiscount;
 
 
     @OneToOne
-    @JoinColumn(name = "box_id", referencedColumnName = "id")
+    @JoinColumn(name = "box_id", referencedColumnName = "id", unique = true)
     private Box box;
 
     @NotNull
     @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true)
     private User user;
 }

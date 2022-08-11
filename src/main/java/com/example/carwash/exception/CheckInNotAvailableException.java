@@ -1,7 +1,7 @@
 package com.example.carwash.exception;
 
 public class CheckInNotAvailableException extends RuntimeException {
-    public CheckInNotAvailableException() {
-        super("Check in is not available already");
+    public CheckInNotAvailableException(String message) {
+        super("Check in is not available " + message);
     }
 }

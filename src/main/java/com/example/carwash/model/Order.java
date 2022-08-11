@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -32,19 +33,22 @@ public class Order {
     private Offer offer;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status")
+    @Column(name = "status", length = 15)
     private OrderStatus status;
 
     @Column(name = "date_time")
     private LocalDateTime dateTime;
 
     @Column(name = "duration")
+    @Positive
     private Integer duration;
 
     @Column(name = "discount")
+    @Positive
     private Integer discount;
 
     @NotNull
+    @Positive
     @Column(name = "price", scale = 2)
     private BigDecimal price;
 

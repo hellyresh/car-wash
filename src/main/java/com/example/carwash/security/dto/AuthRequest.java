@@ -10,6 +10,6 @@ import javax.validation.constraints.NotBlank;
 public class AuthRequest {
     @NotBlank(message = "Name should not be empty")
     private String username;
-    @NotBlank(message = "Password should not be empty")
+    @NotBlank
     private String password;
 }

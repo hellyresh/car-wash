@@ -20,7 +20,7 @@ public class OfferController {
     private final OfferService offerService;
 
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OfferDto createOffer(@Valid @RequestBody OfferCreateDto offerCreateDto) {
@@ -34,14 +34,14 @@ public class OfferController {
         return offerService.getAll();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public void deleteOffer(@PathVariable Long id) {
         offerService.delete(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public OfferDto updateOffer(@PathVariable Long id, @Valid @RequestBody OfferUpdateDto offerUpdateDto) {

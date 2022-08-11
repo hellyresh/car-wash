@@ -37,14 +37,9 @@ public class OrderService {
     private final BoxService boxService;
     private final Integer MIN_ADMIN_DISCOUNT = 0;
     private final Integer MAX_ADMIN_DISCOUNT = 100;
-    private final Integer MIN_BEFORE_ORDER = 10;
+    private final Integer MINUTES_BEFORE_ORDER = 10;
+    private final Long HOURS_CHECKIN_AVAILABLE = 2L;
 
-    //TODO specifications
-    public List<OrderDto> showFilteredOrders(Long boxId, DateTimeIntervalDto dateTimeIntervalDto) {
-        LocalDateTime startDate = dateTimeIntervalDto.getStartDateTime();
-        LocalDateTime endDate = dateTimeIntervalDto.getEndDateTime();
-        return orderRepo.findAll().stream().map(OrderDto::toDto).toList();
-    }
 
 
     @Transactional
@@ -70,7 +65,7 @@ public class OrderService {
             Operator operator = getCurrentOperator();
             return operator.getBox().equals(order.getBox());
         }
-        return false;
+        return true;
     }
 
     @Transactional
@@ -102,7 +97,7 @@ public class OrderService {
         if (Objects.equals(user.getId(), id) || user.getRole().equals(ADMIN)) {
             return user.getOrders().stream().map(OrderDto::toDto).toList();
         }
-        throw new AccessDeniedException();
+        throw new CustomAccessDeniedException();
     }
 
     public Order getOrder(Long id) {
@@ -115,8 +110,8 @@ public class OrderService {
     public OrderDto update(Long id, OrderUpdateDto orderUpdateDto) {
         User user = userService.getCurrentUser();
         Order order = getOrder(id);
-        if (!isAccessGranted(order, user)) {
-            throw new AccessDeniedException();
+        if (isAccessDenied(order, user)) {
+            throw new CustomAccessDeniedException();
         }
         if (!(order.getStatus().equals(SUBMITTED) || (order.getStatus().equals(CHECKED_IN)))) {
             throw new OrderCannotBeChangedException(id, order.getStatus());
@@ -153,6 +148,7 @@ public class OrderService {
         }
         order.setStatus(CHECKED_IN);
         orderRepo.save(order);
+        return OrderDto.toDto(order);
     }
 
 
@@ -174,6 +170,10 @@ public class OrderService {
         return OrderBillDto.toDto(orderBill);
     }
 
+    private boolean isOrderRelatesToOperatorBox(Order order, Operator operator) {
+        return operator.getBox().getId().equals(order.getBox().getId());
+    }
+
     public OrderDto setDiscount(Long id, Integer discount) {
         Order order = getOrder(id);
         if (userService.getCurrentUser().getRole().equals(OPERATOR)) {
@@ -190,9 +190,8 @@ public class OrderService {
         return OrderDto.toDto(order);
     }
 
-    public Operator getCurrentOperator() {
-        User user = userService.getCurrentUser();
-        return operatorService.getOperatorByUserId(user.getId());
+    public Operator getCurrentOperator(User currentUser) {
+        return operatorService.getOperatorByUser(currentUser);
     }
 
     public void cancelNotCheckedInOrders() {
@@ -214,5 +213,9 @@ public class OrderService {
             orderRepo.save(order);
             log.info("Order " + order.getId().toString() + " automatically cancelled");
         }
+    }
+
+    public List<OrderDto> getOrders() {
+        return orderRepo.findAll().stream().map(OrderDto::toDto).toList();
     }
 }

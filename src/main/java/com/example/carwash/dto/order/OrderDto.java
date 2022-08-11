@@ -24,14 +24,20 @@ public class OrderDto {
     public static OrderDto toDto(Order order) {
         OrderDto orderDto = new OrderDto();
         orderDto.id = order.getId();
-        orderDto.userId = order.getUser().getId();
-        orderDto.offerId = order.getOffer().getId();
+        if (order.getUser() != null) {
+            orderDto.userId = order.getUser().getId();
+        }
+        if (order.getOffer() != null) {
+            orderDto.offerId = order.getOffer().getId();
+        }
         orderDto.status = order.getStatus();
         orderDto.dateTime = order.getDateTime();
         orderDto.duration = order.getDuration();
         orderDto.discount = order.getDiscount();
         orderDto.price = order.getPrice();
-        orderDto.boxId = order.getBox().getId();
+        if (order.getBox() != null) {
+            orderDto.boxId = order.getBox().getId();
+        }
         return orderDto;
     }
 }

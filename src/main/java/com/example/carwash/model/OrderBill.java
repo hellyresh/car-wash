@@ -3,10 +3,12 @@ package com.example.carwash.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -30,13 +32,16 @@ public class OrderBill {
     private Long userId;
 
     @NotBlank
-    @Column(name = "offer_name")
+    @Length(min = 3)
+    @Column(name = "offer_name", length = 30)
     private String offerName;
 
     @NotNull
+    @Positive
     @Column(name = "price", scale = 2)
     private BigDecimal price;
 
+    @NotNull
     @Column(name = "date")
     private LocalDateTime dateTime;
 

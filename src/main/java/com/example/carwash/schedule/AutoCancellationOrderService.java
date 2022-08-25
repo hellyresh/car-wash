@@ -12,14 +12,15 @@ import org.springframework.stereotype.Component;
 public class AutoCancellationOrderService {
 
     private final OrderService orderService;
+    private final String EVERY_MINUTE = "0 0/1 * * * ?";
 
     @Scheduled(cron = "@midnight")
-    public void everyMidnight() {
+    public void dailyCancellation() {
         orderService.cancelNotCheckedInOrders();
     }
 
-    @Scheduled(cron = "0 0/3 * * * ?")
-    private void everyMinute() {
+    @Scheduled(cron = EVERY_MINUTE)
+    private void permanentCancellation() {
         orderService.cancelClosestNotCheckedInOrders();
     }
 }

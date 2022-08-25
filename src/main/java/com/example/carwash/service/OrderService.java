@@ -9,11 +9,14 @@ import com.example.carwash.model.*;
 import com.example.carwash.repository.OrderRepo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.DateTimeException;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -205,25 +208,24 @@ public class OrderService {
     @Transactional
     public void cancelNotCheckedInOrders() {
         log.info("Daily automatic cancelling started");
-        List<Order> orders = orderRepo.findAllBySubmittedStatusAndDateTime(LocalDateTime.now());
-        for (Order order : orders) {
-            order.setStatus(CANCELLED);
-            orderRepo.save(order);
-            log.info("Order " + order.getId().toString() + " automatically cancelled");
-        }
+        cancelOrders(orderRepo.findAllBySubmittedStatusAndDateTime(LocalDate.now()));
     }
 
     @Transactional
     public void cancelClosestNotCheckedInOrders() {
-        List<Order> closestOrders = orderRepo.findAllClosestBySubmittedStatusByDateTime(LocalDateTime.now());
-        for (Order order : closestOrders) {
+        cancelOrders(orderRepo.findAllClosestBySubmittedStatusAndDateTime(LocalDateTime.now()));
+    }
+
+    @Transactional
+    void cancelOrders(List<Order> orders) {
+        for (Order order : orders) {
             order.setStatus(CANCELLED);
             orderRepo.save(order);
-            log.info("Order " + order.getId().toString() + " automatically cancelled");
+            log.info("Order " + order.getId().toString() + " was automatically cancelled");
         }
     }
 
-    public List<OrderDto> getOrders() {
-        return orderRepo.findAll().stream().map(OrderDto::toDto).toList();
+    public Page<OrderDto> getOrders(Pageable pageable) {
+        return orderRepo.findAll(pageable).map(OrderDto::toDto); //todo
     }
 }

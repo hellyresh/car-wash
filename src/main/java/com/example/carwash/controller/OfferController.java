@@ -19,7 +19,6 @@ public class OfferController {
 
     private final OfferService offerService;
 
-
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -29,21 +28,18 @@ public class OfferController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<OfferDto> getOffers() {
-        return offerService.getAll();
+    public List<OfferDto> getAllOffers() {
+        return offerService.getOffers();
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
     public void deleteOffer(@PathVariable Long id) {
         offerService.delete(id);
     }
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("{id}")
-    @ResponseStatus(HttpStatus.OK)
     public OfferDto updateOffer(@PathVariable Long id, @Valid @RequestBody OfferUpdateDto offerUpdateDto) {
         return offerService.update(id, offerUpdateDto);
     }

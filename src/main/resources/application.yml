@@ -21,3 +21,6 @@ jwt:
     access: 900000
     refresh: 86400000
   auth-header: "Authorization"
+password:
+  encode-strength: 6
+

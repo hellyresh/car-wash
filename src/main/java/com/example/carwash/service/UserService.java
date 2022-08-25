@@ -10,6 +10,8 @@ import com.example.carwash.model.User;
 import com.example.carwash.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,8 +44,8 @@ public class UserService {
         return OperatorDto.toDto(operatorService.create(user));
     }
 
-    public List<UserDto> getUsers() {
-        return userRepo.findAll().stream().map(UserDto::toDto).toList();
+    public Page<UserDto> getUsers(Pageable pageable) {
+        return userRepo.findAll(pageable).map(UserDto::toDto);
     }
 
 

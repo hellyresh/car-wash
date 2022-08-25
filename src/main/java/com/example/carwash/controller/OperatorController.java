@@ -17,7 +17,6 @@ import java.util.List;
 public class OperatorController {
     private final OperatorService operatorService;
 
-
     @GetMapping
     public List<OperatorDto> getAllOperators() {
         return operatorService.getOperators();

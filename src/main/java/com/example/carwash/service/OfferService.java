@@ -28,7 +28,7 @@ public class OfferService {
         return OfferDto.toDto(offer);
     }
 
-    public List<OfferDto> getAll() {
+    public List<OfferDto> getOffers() {
         return offerRepo.findAll().stream().map(OfferDto::toDto).toList();
     }
 

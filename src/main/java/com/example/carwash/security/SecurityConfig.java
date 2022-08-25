@@ -4,6 +4,7 @@ package com.example.carwash.security;
 import com.example.carwash.security.jwt.JwtFilter;
 import com.example.carwash.security.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -22,6 +23,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomUserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
 
+    @Value("${password.encode-strength}")
+    private int strength;
+
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http
@@ -37,13 +41,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .logout().logoutUrl("/api/logout").logoutSuccessUrl("/api/login");
 
-        //.antMatchers( "/api/auth").permitAll()
-
-//                .and()
-//                .formLogin()
-//                .and()
-//                .logout().logoutUrl("/api/logout")
-//                .logoutSuccessUrl("/api/login");
     }
 
     @Override
@@ -59,6 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder(6);
+        return new BCryptPasswordEncoder(strength);
     }
 }

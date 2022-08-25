@@ -17,7 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 import static com.example.carwash.model.Role.OPERATOR;
 import static com.example.carwash.model.Role.USER;
@@ -72,4 +71,5 @@ public class UserService {
         return userRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User", "id", id.toString()));
     }
+
 }

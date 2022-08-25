@@ -23,4 +23,5 @@ public class AutoCancellationOrderService {
     private void permanentCancellation() {
         orderService.cancelClosestNotCheckedInOrders();
     }
+
 }

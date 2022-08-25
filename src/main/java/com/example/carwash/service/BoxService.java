@@ -67,4 +67,5 @@ public class BoxService {
     public void delete(Long id) {
         boxRepo.delete(getBox(id));
     }
+
 }

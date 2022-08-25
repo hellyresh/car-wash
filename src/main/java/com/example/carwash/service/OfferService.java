@@ -57,4 +57,5 @@ public class OfferService {
         return offerRepo.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Offer", "id", id.toString()));
     }
+
 }

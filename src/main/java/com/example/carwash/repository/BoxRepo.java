@@ -73,6 +73,5 @@ public interface BoxRepo extends JpaRepository<Box, Long> {
             """, nativeQuery = true)
     Box findBestBox(@Param("dateTime") LocalDateTime dateTime, @Param("duration") Integer duration);
 
-
 }
 

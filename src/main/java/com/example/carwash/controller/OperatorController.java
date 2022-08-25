@@ -41,4 +41,5 @@ public class OperatorController {
     public void deleteOperator(@PathVariable Long id) {
         operatorService.delete(id);
     }
+
 }

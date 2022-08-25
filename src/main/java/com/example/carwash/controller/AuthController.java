@@ -34,7 +34,6 @@ public class AuthController {
         return userService.createUser(userCreateDto);
     }
 
-
     @PostMapping("api/login")
     public ResponseEntity<?> authorize(@Valid @RequestBody AuthRequest request) {
         try {

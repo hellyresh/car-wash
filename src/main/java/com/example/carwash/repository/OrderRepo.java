@@ -34,7 +34,4 @@ public interface OrderRepo extends JpaRepository<Order, Long>, JpaSpecificationE
             , nativeQuery = true)
     List<Order> findAllClosestBySubmittedStatusAndDateTime(@Param("now") LocalDateTime now);
 
-    void findByBoxId(Long boxId);
-
-    List<Order> findAllByBoxId(Long boxId);
 }

@@ -38,5 +38,4 @@ public class JwtGenerator {
         return generateToken(user, refreshTime);
     }
 
-
 }

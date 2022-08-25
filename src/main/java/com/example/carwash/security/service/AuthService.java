@@ -27,7 +27,6 @@ public class AuthService {
     private final JwtValidator jwtValidator;
     private final Map<String, String> tokensMap = new HashMap<>();
 
-
     public AuthResponse authUser(AuthRequest AuthRequest) {
         try {
             authenticationManager.authenticate(
@@ -57,6 +56,5 @@ public class AuthService {
         }
         throw new AuthException("Invalid refresh token");
     }
-
 
 }

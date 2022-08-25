@@ -3,17 +3,14 @@ package com.example.carwash.controller;
 import com.example.carwash.dto.operator.OperatorDto;
 import com.example.carwash.dto.order.OrderDto;
 import com.example.carwash.dto.user.UserDto;
-import com.example.carwash.dto.user.UserUpdateDto;
 import com.example.carwash.service.OrderService;
 import com.example.carwash.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -41,4 +38,5 @@ public class UserController {
     public List<OrderDto> getUserOrders(@PathVariable Long id) {
         return orderService.getUserOrders(id);
     }
+
 }

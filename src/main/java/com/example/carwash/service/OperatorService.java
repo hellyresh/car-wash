@@ -77,4 +77,5 @@ public class OperatorService {
         operatorRepo.save(operator);
         return OperatorDto.toDto(operator);
     }
+
 }

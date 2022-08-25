@@ -40,4 +40,5 @@ public class BoxController {
     public void delete(@PathVariable Long id) {
         boxService.delete(id);
     }
+
 }
